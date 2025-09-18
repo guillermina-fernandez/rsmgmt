@@ -1,0 +1,44 @@
+import { useRef } from 'react';
+import { useObjContext } from '../context/ParametersContext';
+import FormOwner from './ModalsParameters';
+
+
+function Modal({ onClose, modalTitle }) {
+    
+    const { obj } = useObjContext();
+
+    const formRef = useRef();
+
+    function handleClick() {
+        if (formRef.current) {
+            formRef.current.requestSubmit();
+        }
+    }
+    
+    return (
+        <div className="modal fade show d-block pg-show-modal" style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}>
+            <div className="modal-dialog" role="document">
+                <div className="modal-content px-3 py-3">
+                    <div className="modal-header">
+                        <h4 className="modal-title">{modalTitle}</h4>
+                        <button className="btn-close" type="button" onClick={onClose}></button>
+                    </div>
+                    <div className="modal-body">
+                        {obj === 'propietario' && <FormOwner formRef={formRef} onClose={onClose}></FormOwner>}
+                    </div>
+                    <hr/>
+                    <div className="hstack">
+                        <div className="w-100">
+                        </div>
+                        <div className="hstack">
+                            <button className="btn btn-default" type="button" onClick={onClose}>Cancelar</button>
+                            <button className="btn btn-primary ms-3" onClick={handleClick}>Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default Modal;

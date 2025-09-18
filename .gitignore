@@ -1,0 +1,33 @@
+Venv/
+.venv/
+env/
+ENV/
+
+# Backend
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+media/
+staticfiles/
+*.log
+*.pkl
+**/migrations/
+!**/migrations/__init__.py
+
+# Settings
+.env
+.env.local
+Django + DRF + React.txt
+
+# IDE
+.vscode/
+.idea/
+
+# Temps
+*.bak
+*.swp
+*~
+*.tmp

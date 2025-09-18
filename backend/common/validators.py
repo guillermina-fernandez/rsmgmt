@@ -1,0 +1,117 @@
+import re
+from django.core.exceptions import ValidationError
+from django.db import models
+
+
+def validate_cuit(value):
+    if not re.match(r'^\d{2}-?\d{8}-?\d{1}$', value):
+        raise ValidationError('CUIT must have the following format: XX-XXXXXXXX-X')
+
+    cuit = re.sub(r'[^\d]', '', value)
+
+    if len(cuit) != 11:
+        raise ValidationError('CUIT must have 11 digits (without "-"s)')
+
+    mult = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2]
+    aux = 0
+    for i in range(10):
+        aux += int(cuit[i]) * mult[i]
+    verificador = 11 - (aux % 11)
+    if verificador == 11:
+        verificador = 0
+    elif verificador == 10:
+        verificador = 9
+
+    if verificador != int(cuit[10]):
+        raise ValidationError('CUIT not valid')
+
+
+class UniqueTogetherWithNullAsEmpty:
+    def __init__(self, queryset, fields, model=None, message=None):
+        self.queryset = queryset
+        self.fields = fields
+        self.model = model
+        self.message = message or (
+            f"Combination of {fields} must be unique (treating null as empty)"
+            f"{' in ' + model.__name__ if model else ''}."
+        )
+
+    def __call__(self, attrs, serializer=None):
+        instance = getattr(serializer, "instance", None)
+        instance_pk = getattr(instance, "pk", None)
+
+        # Build comparison dictionary
+        compare = {f: attrs.get(f, None) for f in self.fields}
+
+        # Iterate DB objects, skipping self
+        qs = self.queryset
+        if instance_pk:
+            qs = qs.exclude(pk=instance_pk)
+
+        for obj in qs:
+            match = True
+            for f in self.fields:
+                val = getattr(obj, f)
+                if val is None and compare[f] is None:
+                    continue  # treat both None as equal
+                if val != compare[f]:
+                    match = False
+                    break
+            if match:
+                raise ValidationError(self.message)
+
+
+def normalize_form_data(model_obj, form_data):
+    def to_int_or_keep(value):
+        if value in (None, ""):
+            return value
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return value
+
+    def to_float_or_keep(value):
+        if value in (None, ""):
+            return value
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return value
+
+    normalized = {}
+
+    # Handle normal fields
+    for field in model_obj._meta.fields:
+        name = field.name
+        if name not in form_data:
+            continue
+
+        value = form_data[name]
+
+        if isinstance(field, (models.CharField, models.TextField)) and isinstance(value, str):
+            normalized[name] = value.strip().upper()
+        elif isinstance(field, models.IntegerField):
+            normalized[name] = to_int_or_keep(value)
+        elif isinstance(field, (models.FloatField, models.DecimalField)):
+            normalized[name] = to_float_or_keep(value)
+        elif isinstance(field, (models.ForeignKey, models.OneToOneField)):
+            normalized[name] = to_int_or_keep(value)
+        else:
+            normalized[name] = value
+
+    # Handle ManyToMany fields (like owner, rs_use, etc.)
+    for field in model_obj._meta.many_to_many:
+        name = field.name
+        if name not in form_data:
+            continue
+
+        value = form_data[name]
+        if value:
+            if isinstance(value, (list, tuple)):
+                normalized[name] = [to_int_or_keep(v) for v in value if v is not None]
+            else:
+                normalized[name] = [to_int_or_keep(value)]
+        else:
+            normalized[name] = []
+
+    return normalized
