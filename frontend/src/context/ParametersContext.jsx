@@ -9,6 +9,8 @@ export const ObjProvider = ({ obj, children }) => {
     const [objData, setObjData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchObj, setSearchObj] = useState("");
+    const [foundObjs, setFoundObjs] = useState(objData);
 
     // Load initial data on page load
     useEffect(() => {
@@ -42,6 +44,28 @@ export const ObjProvider = ({ obj, children }) => {
             console.log('Hide loading.gif');
         }
     }, [loading])
+
+    // Search object:
+    useEffect(() => {
+        if (!searchObj) {
+            setFoundObjs(objData);
+            return;
+        }
+
+        const lower = searchObj.toLowerCase();
+        const results = objData.filter(
+            (item) =>
+                item.last_name?.toLowerCase().includes(lower) ||
+                item.first_name?.toLowerCase().includes(lower) ||
+                item.cuit?.includes(lower)
+        );
+
+        setFoundObjs(results);
+    }, [searchObj, objData])
+
+    const handleSearch = (inputValue) => {
+        setSearchObj(inputValue);
+    }
 
     // Submit form:
     const submitForm = async (data, onSuccess) => {
@@ -78,7 +102,10 @@ export const ObjProvider = ({ obj, children }) => {
         updateObjData,
         setLoading,
         setError,
-        submitForm
+        submitForm,
+        searchObj,
+        handleSearch,
+        foundObjs,
     }
 
     return <ObjContext.Provider value={value}>

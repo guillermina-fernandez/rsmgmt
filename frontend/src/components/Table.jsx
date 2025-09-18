@@ -3,7 +3,12 @@ import { useObjContext } from "../context/ParametersContext";
 
 function Table({ cols, onOpenModal }) {
 
-    const { objData } = useObjContext();
+    const { objData, foundObjs } = useObjContext();
+
+    let showData = objData;
+    if (foundObjs) {
+        showData = foundObjs;
+    }
 
     return (
         <div>
@@ -14,7 +19,7 @@ function Table({ cols, onOpenModal }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {objData.map((obj) =>
+                    {showData.map((obj) =>
                         <tr key={obj.id} className="text-start">
                             <td style={{ verticalAlign: "middle" }}>{obj.id}</td>
                             <td style={{ verticalAlign: "middle" }}>{obj.last_name}</td>
