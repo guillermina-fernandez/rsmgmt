@@ -3,9 +3,9 @@ import { useObjContext } from '../context/ParametersContext';
 import FormOwner from './ModalsParameters';
 
 
-function Modal({ onClose, modalTitle }) {
+function Modal() {
     
-    const { obj, closeModal, editObj } = useObjContext();
+    const { obj, closeModal, editObj, modalTitle } = useObjContext();
 
     const formRef = useRef();
 

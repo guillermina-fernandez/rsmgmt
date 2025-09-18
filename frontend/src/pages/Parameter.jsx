@@ -12,14 +12,11 @@ const columns_names = {
 function Parameter() {
     const { obj, objData, showModal } = useObjContext();
 
-    const modalTitle = String(obj[0]).toUpperCase() + String(obj).slice(1);
-
     return (
         <div>
             <SearchBar obj={obj} />
             <Table objData={objData} cols={columns_names[obj]} />
-            {showModal && <Modal modalTitle={`Nuevo ${modalTitle}`} />}
-            {showModal && <Modal modalTitle={`Editar ${modalTitle}`} />}
+            {showModal && <Modal />}
         </div>
     )
 }

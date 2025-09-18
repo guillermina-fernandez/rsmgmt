@@ -12,6 +12,7 @@ export const ObjProvider = ({ obj, children }) => {
     const [searchObj, setSearchObj] = useState("");
     const [foundObjs, setFoundObjs] = useState(objData);
     const [showModal, setShowModal] = useState(false);
+    const [modalTitle, setModalTitle] = useState('');
     const [editObj, setEditObj] = useState(null);
 
     // Load initial data on page load
@@ -70,8 +71,9 @@ export const ObjProvider = ({ obj, children }) => {
     }
 
     // Handle modal:
-    const openModal = () => {
+    const openModal = (newModalTitle) => {
         setShowModal(true);
+        setModalTitle(newModalTitle)
         setEditObj(null);
     };
     
@@ -182,6 +184,7 @@ export const ObjProvider = ({ obj, children }) => {
         setError,
         showModal, 
         openModal,
+        modalTitle,
         closeModal,
         editObj,
         setEditObj,

@@ -3,7 +3,7 @@ import { useObjContext } from "../context/ParametersContext";
 
 function Table({ cols }) {
 
-    const { objData, foundObjs, handleDelete, openModal, setEditObj } = useObjContext();
+    const { obj, objData, foundObjs, handleDelete, openModal, setEditObj } = useObjContext();
 
     let showData = objData;
     if (foundObjs) {
@@ -11,7 +11,8 @@ function Table({ cols }) {
     }
 
     const handleEdit = (editObj) => {
-        openModal();
+        const newModalTitle = `Editar ${String(obj[0]).toUpperCase() + String(obj).slice(1)}`
+        openModal(newModalTitle);
         setEditObj(editObj)
     }
 
