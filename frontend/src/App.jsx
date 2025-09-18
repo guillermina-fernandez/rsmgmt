@@ -8,7 +8,12 @@ function App() {
     <main>
       <Routes>
         <Route path="/propietario" element={
-          <ObjProvider obj="propietario"> {/* to pass context to it's children */}
+          <ObjProvider obj="propietario">
+            <Parameter />
+          </ObjProvider>
+        } />
+        <Route path="/inquilino" element={
+          <ObjProvider obj="inquilino">
             <Parameter />
           </ObjProvider>
         } />

@@ -10,10 +10,11 @@ from django.db.models import ProtectedError, RestrictedError
 
 from common.validators import UniqueTogetherWithNullAsEmpty, normalize_form_data
 
-from parameters.models import Owner
+from parameters.models import Owner, Tenant
 
 models_dic = {
     'propietario': Owner,
+    'inquilino': Tenant,
 }
 
 

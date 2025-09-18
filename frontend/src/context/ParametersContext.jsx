@@ -30,7 +30,10 @@ export const ObjProvider = ({ obj, children }) => {
             }
         };
         loadData();
-    }, []);
+
+        return () => { }
+        
+    }, [obj]);
    
     // Alert error (if any)
     useEffect(() => {
@@ -125,10 +128,6 @@ export const ObjProvider = ({ obj, children }) => {
             } else {
                 updateObjData(newData);
             }
-
-            /*const postedData = await postObjData(obj, data);
-            const newData = Array.isArray(postedData) ? postedData[0] : postedData;
-            updateObjData(newData);*/
             setShowModal(false);
         } catch (err) {
             setError(err);
@@ -162,18 +161,6 @@ export const ObjProvider = ({ obj, children }) => {
             return (a?.first_name ?? "").localeCompare(b?.first_name ?? "");
         });
     };
-
-    // Update data (sorted for table)
-    /*const updateObjData = (newData) => {
-        setObjData(prev => {
-            const updated = [...prev, newData].flat();
-            return updated.sort((a, b) => {
-                const lastCompare = (a?.last_name ?? "").localeCompare(b?.last_name ?? "");
-                if (lastCompare !== 0) return lastCompare;
-                return (a?.first_name ?? "").localeCompare(b?.first_name ?? "");
-            });
-        });
-    };*/
 
     // Context values passed to children
     const value = {

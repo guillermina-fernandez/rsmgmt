@@ -6,9 +6,11 @@ import { useObjContext } from "../context/ParametersContext";
 
 
 const columns_names = {
-    propietario: ["COD", "APELLIDO", "NOMBRE", "CUIT", "", ""]
+    propietario: ["COD", "APELLIDO", "NOMBRE", "CUIT", "", ""],
+    inquilino: ["COD", "APELLIDO", "NOMBRE", "CUIT", "", ""]
 }
 
+// SearchBar --> Buscar... va acá
 
 function Parameter() {
     const { obj, objData, showModal } = useObjContext();
