@@ -1,3 +1,4 @@
+import NavBar from "../components/NavBar";
 import SearchBar from "../components/SearchBar";
 import Table from "../components/Table";
 import Modal from "../components/Modal";
@@ -14,6 +15,7 @@ function Parameter() {
 
     return (
         <div>
+            <NavBar/>
             <SearchBar obj={obj} />
             <Table objData={objData} cols={columns_names[obj]} />
             {showModal && <Modal />}
