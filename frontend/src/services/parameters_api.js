@@ -1,3 +1,4 @@
+// Fetch all objects
 export const fetchObjData = async (obj) => {
     const response = await fetch(`http://127.0.0.1:8000/api/${obj}/`);
 
@@ -15,8 +16,8 @@ export const fetchObjData = async (obj) => {
     return await response.json();
 };
 
-
-export const postObjData = async (obj, data) => {
+// Create new record
+export const createObjDataAPI = async (obj, data) => {
     const response = await fetch(`http://127.0.0.1:8000/api/create/${obj}/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -41,8 +42,34 @@ export const postObjData = async (obj, data) => {
     return result.data;
 };
 
+// Update record:
+export const updateObjDataAPI = async (obj, id, data) => {
+    const response = await fetch(`http://127.0.0.1:8000/api/update/${obj}/${id}/`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+    });
 
-export const deleteObj = async (obj, objId) => {
+    let result;
+    try {
+        result = await response.json();
+    } catch {
+        result = await response.text();
+    }
+
+    if (!response.ok) {
+        throw new Error(
+            result.error
+                ? JSON.stringify(result.error, null, 2)
+                : `Error ${response.status}`
+        );
+    }
+
+    return result.data;
+};
+
+// Delete record:
+export const deleteObjAPI = async (obj, objId) => {
     const response = await fetch(`http://127.0.0.1:8000/api/delete/${obj}/${objId}/`, {
         method: 'DELETE',
     });

@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import { fetchObjData, postObjData, deleteObj } from "../services/parameters_api";
+import { fetchObjData, createObjDataAPI, updateObjDataAPI, deleteObjAPI } from "../services/parameters_api";
 
 const ObjContext = createContext();
 
@@ -12,6 +12,7 @@ export const ObjProvider = ({ obj, children }) => {
     const [searchObj, setSearchObj] = useState("");
     const [foundObjs, setFoundObjs] = useState(objData);
     const [showModal, setShowModal] = useState(false);
+    const [editObj, setEditObj] = useState(null);
 
     // Load initial data on page load
     useEffect(() => {
@@ -69,8 +70,15 @@ export const ObjProvider = ({ obj, children }) => {
     }
 
     // Handle modal:
-    const openModal = () => setShowModal(true);
-    const closeModal = () => setShowModal(false);
+    const openModal = () => {
+        setShowModal(true);
+        setEditObj(null);
+    };
+    
+    const closeModal = () => {
+        setShowModal(false);
+        setEditObj(null);
+    };
 
     // Delete obj:
     const handleDelete = async (obj_id) => {        
@@ -85,7 +93,7 @@ export const ObjProvider = ({ obj, children }) => {
         if (accepted) {
             setLoading(true);
             try {
-                await deleteObj(obj, obj_id);
+                await deleteObjAPI(obj, obj_id);
                 setObjData(prev => prev.filter(delObj => delObj.id !== obj_id));
             } catch (err) {
                 setError(err);
@@ -97,13 +105,28 @@ export const ObjProvider = ({ obj, children }) => {
     };
 
     // Submit form:
-    const submitForm = async (data) => {
+    const submitForm = async (data, mode) => {
         setLoading(true);
         setError(null);
         try {
-            const postedData = await postObjData(obj, data);
+            let responseData;
+            if (mode === 'create') {
+                responseData = await createObjDataAPI(obj, data);
+            } else {
+                responseData = await updateObjDataAPI(obj, data.id, data);
+            }
+
+            const newData = Array.isArray(responseData) ? responseData[0] : responseData;
+
+            if (mode === 'create') {
+                addObjData(newData);
+            } else {
+                updateObjData(newData);
+            }
+
+            /*const postedData = await postObjData(obj, data);
             const newData = Array.isArray(postedData) ? postedData[0] : postedData;
-            updateObjData(newData);
+            updateObjData(newData);*/
             setShowModal(false);
         } catch (err) {
             setError(err);
@@ -112,8 +135,34 @@ export const ObjProvider = ({ obj, children }) => {
         }
     };
 
-    // Update data (sorted for table)
+    // Update objData with new record:
+    const addObjData = (newData) => {
+        setObjData(prev => {
+            const updated = [...prev, newData];
+            return sortData(updated);
+        });
+    }
+
+    // Update objData with edited record:
     const updateObjData = (newData) => {
+        setObjData(prev => {
+            const updated = prev.map(item =>
+                item.id === newData.id ? newData : item
+            );
+            return sortData(updated);
+        });
+    }
+
+    const sortData = (data) => {
+        return data.sort((a, b) => {
+            const lastCompare = (a?.last_name ?? "").localeCompare(b?.last_name ?? "");
+            if (lastCompare !== 0) return lastCompare;
+            return (a?.first_name ?? "").localeCompare(b?.first_name ?? "");
+        });
+    };
+
+    // Update data (sorted for table)
+    /*const updateObjData = (newData) => {
         setObjData(prev => {
             const updated = [...prev, newData].flat();
             return updated.sort((a, b) => {
@@ -122,7 +171,7 @@ export const ObjProvider = ({ obj, children }) => {
                 return (a?.first_name ?? "").localeCompare(b?.first_name ?? "");
             });
         });
-    };
+    };*/
 
     // Context values passed to children
     const value = {
@@ -134,6 +183,8 @@ export const ObjProvider = ({ obj, children }) => {
         showModal, 
         openModal,
         closeModal,
+        editObj,
+        setEditObj,
         submitForm,
         searchObj,
         handleSearch,

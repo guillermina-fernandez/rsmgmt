@@ -3,11 +3,16 @@ import { useObjContext } from "../context/ParametersContext";
 
 function Table({ cols }) {
 
-    const { objData, foundObjs, handleDelete, openModal } = useObjContext();
+    const { objData, foundObjs, handleDelete, openModal, setEditObj } = useObjContext();
 
     let showData = objData;
     if (foundObjs) {
         showData = foundObjs;
+    }
+
+    const handleEdit = (editObj) => {
+        openModal();
+        setEditObj(editObj)
     }
 
     return (
@@ -29,7 +34,7 @@ function Table({ cols }) {
                                 <button className="btn btn-sm btn-danger" type="button" onClick={() => handleDelete(obj.id)}><i className="bi bi-trash3"></i></button>
                             </td>
                             <td style={{ width: "10px" }}>
-                                <button className="btn btn-sm btn-success" type="button" onClick={openModal}><i className="bi bi-pencil-square"></i></button>
+                                <button className="btn btn-sm btn-success" type="button" onClick={() => handleEdit(obj)}><i className="bi bi-pencil-square"></i></button>
                             </td>
                         </tr>
                     )}

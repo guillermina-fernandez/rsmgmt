@@ -82,6 +82,40 @@ def create_object(request, model_name):
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['PUT'])
+def update_object(request, model_name, obj_id):
+    form_data = request.data
+
+    if not form_data:
+        return Response({'error': 'No se ha enviado la información.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not model_name:
+        return Response({'error': 'No se ha determinado un modelo.'}, status=status.HTTP_400_BAD_REQUEST)
+    if not obj_id:
+        return Response({'error': 'No se ha determinado un id.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    form_data = normalize_form_data(models_dic[model_name], form_data)
+    serializer_class = get_serializer_class(models_dic[model_name], '__all__', 0)
+    try:
+        object_instance = models_dic[model_name].objects.get(id=int(obj_id))
+    except ValidationError as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except models_dic[model_name].DoesNotExist:
+        return Response({'error': f'No se encontró el objeto del modelo {model_name} con id {obj_id}.'}, status=status.HTTP_404_NOT_FOUND)
+    except LookupError:
+        return Response({'error': f'Nombre de modelo inválido ({model_name}).'}, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = serializer_class(instance=object_instance, data=form_data)
+    if serializer.is_valid():
+        try:
+            serializer.save()
+            return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['DELETE'])
 def delete_object(request, model_name, obj_id):
     if not model_name:

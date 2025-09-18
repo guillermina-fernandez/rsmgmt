@@ -5,7 +5,7 @@ import FormOwner from './ModalsParameters';
 
 function Modal({ onClose, modalTitle }) {
     
-    const { obj, closeModal } = useObjContext();
+    const { obj, closeModal, editObj } = useObjContext();
 
     const formRef = useRef();
 
@@ -24,7 +24,7 @@ function Modal({ onClose, modalTitle }) {
                         <button className="btn-close" type="button" onClick={closeModal}></button>
                     </div>
                     <div className="modal-body">
-                        {obj === 'propietario' && <FormOwner formRef={formRef}></FormOwner>}
+                        {obj === 'propietario' && <FormOwner formRef={formRef} initialData={ editObj }></FormOwner>}
                     </div>
                     <hr/>
                     <div className="hstack">

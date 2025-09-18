@@ -1,14 +1,23 @@
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import validateCuit from '../myScripts/myMainScript';
 import { useObjContext } from '../context/ParametersContext';
 
-function FormOwner({ formRef}) {
+function FormOwner({ formRef, initialData }) {
     const { submitForm } = useObjContext();
-    const { register, handleSubmit, formState: { errors } } = useForm()
+    const { register, handleSubmit, formState: { errors }, reset } = useForm()
+
+    useEffect(() => {
+        if (initialData) reset(initialData);
+    }, [initialData, reset]);
 
     const onSubmit = handleSubmit((data) => {
-        submitForm(data);
-    })
+        if (initialData?.id) {
+            submitForm({ ...initialData, ...data }, "update");
+        } else {
+            submitForm(data, "create");
+        }
+    });
     
     return (
         <form ref={formRef} onSubmit={onSubmit}>
