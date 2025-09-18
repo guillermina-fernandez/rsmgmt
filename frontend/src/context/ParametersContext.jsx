@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import { fetchObjData, postObjData } from "../services/parameters_api";
+import { fetchObjData, postObjData, deleteObj } from "../services/parameters_api";
 
 const ObjContext = createContext();
 
@@ -67,6 +67,30 @@ export const ObjProvider = ({ obj, children }) => {
         setSearchObj(inputValue);
     }
 
+    // Delete obj:
+    const handleDelete = async (obj_id) => {        
+        const objToDelete = objData.find(delObj => delObj.id === obj_id);
+        let message = 'ATENCIÓN!\nSe eliminará el registro:\n';
+        Object.values(objToDelete).forEach(value => {
+            message += value + ' - ';
+        })
+        
+        const accepted = confirm(message.slice(0, -3));
+        
+        if (accepted) {
+            setLoading(true);
+            try {
+                await deleteObj(obj, obj_id);
+                setObjData(prev => prev.filter(delObj => delObj.id !== obj_id));
+            } catch (err) {
+                setError(err);
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        }
+    };
+
     // Submit form:
     const submitForm = async (data, onSuccess) => {
         setLoading(true);
@@ -106,6 +130,7 @@ export const ObjProvider = ({ obj, children }) => {
         searchObj,
         handleSearch,
         foundObjs,
+        handleDelete
     }
 
     return <ObjContext.Provider value={value}>

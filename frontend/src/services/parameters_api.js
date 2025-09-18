@@ -40,3 +40,22 @@ export const postObjData = async (obj, data) => {
 
     return result.data;
 };
+
+
+export const deleteObj = async (obj, objId) => {
+    const response = await fetch(`http://127.0.0.1:8000/api/delete/${obj}/${objId}/`, {
+        method: 'DELETE',
+    });
+
+    if (!response.ok) {
+        let result;
+        try {
+            result = await response.json();
+        } catch {
+            result = await response.text();
+        }
+
+        const message = result?.error ? JSON.stringify(result.error, null, 2) : `Error ${response.status}`;
+        throw new Error(message);
+    }
+};

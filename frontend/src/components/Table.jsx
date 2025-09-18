@@ -3,7 +3,7 @@ import { useObjContext } from "../context/ParametersContext";
 
 function Table({ cols, onOpenModal }) {
 
-    const { objData, foundObjs } = useObjContext();
+    const { objData, foundObjs, handleDelete } = useObjContext();
 
     let showData = objData;
     if (foundObjs) {
@@ -26,7 +26,7 @@ function Table({ cols, onOpenModal }) {
                             <td style={{ verticalAlign: "middle" }}>{obj.first_name}</td>
                             <td style={{ verticalAlign: "middle" }}>{obj.cuit}</td>
                             <td style={{ width: "10px" }}>
-                                <button className="btn btn-sm btn-danger" type="button"><i className="bi bi-trash3"></i></button>
+                                <button className="btn btn-sm btn-danger" type="button" onClick={() => handleDelete(obj.id)}><i className="bi bi-trash3"></i></button>
                             </td>
                             <td style={{ width: "10px" }}>
                                 <button className="btn btn-sm btn-success" type="button" onClick={onOpenModal}><i className="bi bi-pencil-square"></i></button>
