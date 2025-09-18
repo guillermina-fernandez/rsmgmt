@@ -1,13 +1,13 @@
 import { useObjContext } from "../context/ParametersContext";
 
-function SearchBar({ onOpenModal }) {
-    const { obj, searchObj, handleSearch } = useObjContext();
+function SearchBar() {
+    const { obj, searchObj, handleSearch, openModal } = useObjContext();
     const obj_name = obj.toUpperCase();
 
     return (
         <div className="hstack w-100 mb-5">
             <input className="form-control w-100" type="text" placeholder="Buscar Propietario..." value={searchObj} onChange={(e) => handleSearch(e.target.value)}/>
-            <button className="btn btn-primary w-auto text-nowrap ms-3" type="button" onClick={onOpenModal}>
+            <button className="btn btn-primary w-auto text-nowrap ms-3" type="button" onClick={openModal}>
                 {`+ ${obj_name}`}
             </button>
         </div>

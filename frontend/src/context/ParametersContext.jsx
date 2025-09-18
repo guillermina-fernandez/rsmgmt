@@ -11,6 +11,7 @@ export const ObjProvider = ({ obj, children }) => {
     const [error, setError] = useState(null);
     const [searchObj, setSearchObj] = useState("");
     const [foundObjs, setFoundObjs] = useState(objData);
+    const [showModal, setShowModal] = useState(false);
 
     // Load initial data on page load
     useEffect(() => {
@@ -67,6 +68,10 @@ export const ObjProvider = ({ obj, children }) => {
         setSearchObj(inputValue);
     }
 
+    // Handle modal:
+    const openModal = () => setShowModal(true);
+    const closeModal = () => setShowModal(false);
+
     // Delete obj:
     const handleDelete = async (obj_id) => {        
         const objToDelete = objData.find(delObj => delObj.id === obj_id);
@@ -92,14 +97,14 @@ export const ObjProvider = ({ obj, children }) => {
     };
 
     // Submit form:
-    const submitForm = async (data, onSuccess) => {
+    const submitForm = async (data) => {
         setLoading(true);
         setError(null);
         try {
             const postedData = await postObjData(obj, data);
             const newData = Array.isArray(postedData) ? postedData[0] : postedData;
             updateObjData(newData);
-            if (onSuccess) onSuccess();
+            setShowModal(false);
         } catch (err) {
             setError(err);
         } finally {
@@ -126,6 +131,9 @@ export const ObjProvider = ({ obj, children }) => {
         updateObjData,
         setLoading,
         setError,
+        showModal, 
+        openModal,
+        closeModal,
         submitForm,
         searchObj,
         handleSearch,

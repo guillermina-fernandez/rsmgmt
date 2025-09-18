@@ -5,7 +5,7 @@ import FormOwner from './ModalsParameters';
 
 function Modal({ onClose, modalTitle }) {
     
-    const { obj } = useObjContext();
+    const { obj, closeModal } = useObjContext();
 
     const formRef = useRef();
 
@@ -21,17 +21,17 @@ function Modal({ onClose, modalTitle }) {
                 <div className="modal-content px-3 py-3">
                     <div className="modal-header">
                         <h4 className="modal-title">{modalTitle}</h4>
-                        <button className="btn-close" type="button" onClick={onClose}></button>
+                        <button className="btn-close" type="button" onClick={closeModal}></button>
                     </div>
                     <div className="modal-body">
-                        {obj === 'propietario' && <FormOwner formRef={formRef} onClose={onClose}></FormOwner>}
+                        {obj === 'propietario' && <FormOwner formRef={formRef}></FormOwner>}
                     </div>
                     <hr/>
                     <div className="hstack">
                         <div className="w-100">
                         </div>
                         <div className="hstack">
-                            <button className="btn btn-default" type="button" onClick={onClose}>Cancelar</button>
+                            <button className="btn btn-default" type="button" onClick={closeModal}>Cancelar</button>
                             <button className="btn btn-primary ms-3" onClick={handleClick}>Guardar</button>
                         </div>
                     </div>

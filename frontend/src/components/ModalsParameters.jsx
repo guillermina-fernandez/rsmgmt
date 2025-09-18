@@ -2,12 +2,12 @@ import { useForm } from 'react-hook-form';
 import validateCuit from '../myScripts/myMainScript';
 import { useObjContext } from '../context/ParametersContext';
 
-function FormOwner({ formRef, onClose}) {
+function FormOwner({ formRef}) {
     const { submitForm } = useObjContext();
     const { register, handleSubmit, formState: { errors } } = useForm()
 
     const onSubmit = handleSubmit((data) => {
-        submitForm(data, onClose);
+        submitForm(data);
     })
     
     return (

@@ -84,7 +84,6 @@ def create_object(request, model_name):
 
 @api_view(['DELETE'])
 def delete_object(request, model_name, obj_id):
-    print(model_name, obj_id)
     if not model_name:
         return Response({'error': 'No se ha determinado un modelo.'}, status=status.HTTP_400_BAD_REQUEST)
     if not obj_id:
