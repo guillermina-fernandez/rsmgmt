@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { useObjContext } from '../context/ParametersContext';
-import {FormOwner, FormRsType} from './ModalsParameters';
+import {FormOwner, FormRsType} from './ParametersForms';
 
 
 function Modal() {
@@ -25,6 +25,7 @@ function Modal() {
                     </div>
                     <div className="modal-body">
                         {obj === 'propietario' && <FormOwner formRef={formRef} initialData={editObj}></FormOwner>}
+                        {obj === 'inquilino' && <FormOwner formRef={formRef} initialData={editObj}></FormOwner>}
                         {obj === "tipo_de_propiedad" && <FormRsType formRef={formRef} initialData={editObj}></FormRsType>}
                     </div>
                     <hr/>

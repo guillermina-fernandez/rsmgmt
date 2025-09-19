@@ -16,11 +16,8 @@ class RealState(models.Model):
     buy_value = models.CharField(max_length=100, blank=True, null=True)
     observations = models.CharField(max_length=500, blank=True, null=True)
 
-    class Meta:
-        unique_together = ('address', 'floor', 'unit', )
-        ordering = ('address', 'floor', 'unit', )
-
-    def __str__(self):
+    @property
+    def rs_name(self):
         rs_name = self.address
         if self.floor:
             rs_name += f' - Piso: {self.floor}'
@@ -28,3 +25,6 @@ class RealState(models.Model):
             rs_name += f' - Unidad: {self.unit}'
         return rs_name
 
+    class Meta:
+        unique_together = ('address', 'floor', 'unit', )
+        ordering = ('address', 'floor', 'unit', )

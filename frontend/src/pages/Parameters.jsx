@@ -5,24 +5,17 @@ import Modal from "../components/Modal";
 import { useObjContext } from "../context/ParametersContext";
 
 
-const columns_names = {
-    propietario: ["COD", "APELLIDO", "NOMBRE", "CUIT"],
-    inquilino: ["COD", "APELLIDO", "NOMBRE", "CUIT"],
-    tipo_de_propiedad: ["COD", "TIPO DE PROPIEDAD"]
-}
-
-
-function Parameter() {
-    const { obj, objData, showModal } = useObjContext();
+function Parameters() {
+    const { obj, modelConfig, objData, showModal } = useObjContext();
 
     return (
         <div>
             <NavBar/>
             <SearchBar obj={obj} />
-            <Table objData={objData} cols={columns_names[obj]} />
+            <Table objData={objData} cols={modelConfig[obj]["columns"]} />
             {showModal && <Modal />}
         </div>
     )
 }
 
-export default Parameter;
+export default Parameters;

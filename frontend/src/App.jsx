@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import './App.css'
-import Parameter from './pages/Parameter'
+import Parameters from './pages/Parameters'
+import RealStates from './pages/RealStates'
 import { ObjProvider } from './context/ParametersContext'
 
 function App() {
@@ -9,17 +10,22 @@ function App() {
       <Routes>
         <Route path="/propietario" element={
           <ObjProvider obj="propietario">
-            <Parameter />
+            <Parameters />
           </ObjProvider>
         } />
         <Route path="/inquilino" element={
           <ObjProvider obj="inquilino">
-            <Parameter />
+            <Parameters />
           </ObjProvider>
         } />
         <Route path="/tipo_de_propiedad" element={
           <ObjProvider obj="tipo_de_propiedad">
-            <Parameter />
+            <Parameters />
+          </ObjProvider>
+        } />
+        <Route path="/propiedad" element={
+          <ObjProvider obj="propiedad">
+            <RealStates />
           </ObjProvider>
         } />
       </Routes>
