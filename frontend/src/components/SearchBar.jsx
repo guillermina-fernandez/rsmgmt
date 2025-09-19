@@ -1,4 +1,4 @@
-import { useObjContext } from "../context/ParametersContext";
+import { useObjContext } from "../context/CrudContext";
 
 function SearchBar() {
     const { obj, searchObj, handleSearch, openModal } = useObjContext();

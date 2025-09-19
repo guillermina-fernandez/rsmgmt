@@ -2,10 +2,10 @@ import NavBar from "../components/NavBar";
 import SearchBar from "../components/SearchBar";
 import Table from "../components/Table";
 import Modal from "../components/Modal";
-import { useObjContext } from "../context/ParametersContext";
+import { useObjContext } from "../context/CrudContext";
 
 
-function Parameters() {
+function Crud() {
     const { obj, modelConfig, objData, showModal } = useObjContext();
 
     return (
@@ -18,4 +18,4 @@ function Parameters() {
     )
 }
 
-export default Parameters;
+export default Crud;

@@ -1,6 +1,24 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { fetchObjData, createObjDataAPI, updateObjDataAPI, deleteObjAPI } from "../services/api_crud";
 
+const modelConfig = {
+    propietario: {
+        columns: ["COD", "APELLIDO", "NOMBRE", "CUIT"],
+        searchBy: ["last_name", "first_name", "cuit"],
+        sortBy: ["last_name", "first_name"]
+    },
+    inquilino: {
+        columns: ["COD", "APELLIDO", "NOMBRE", "CUIT"],
+        searchBy: ["last_name", "first_name", "cuit"],
+        sortBy: ["last_name", "first_name"],
+    },
+    tipo_de_propiedad: {
+        columns: ["COD", "TIPO DE PROPIEDAD"],
+        searchBy: ["rs_type"],
+        sortBy: ["rs_type"],
+    },
+}
+
 const ObjContext = createContext();
 
 export const useObjContext = () => useContext(ObjContext);
@@ -59,11 +77,11 @@ export const ObjProvider = ({ obj, children }) => {
         }
 
         const lower = searchObj.toLowerCase();
-        const results = objData.filter(
-            (item) =>
-                item.last_name?.toLowerCase().includes(lower) ||
-                item.first_name?.toLowerCase().includes(lower) ||
-                item.cuit?.includes(lower)
+        const { searchBy } = modelConfig[obj] || { searchBy: [] };
+        const results = objData.filter((item) =>
+            searchBy.some(
+                (field) => item[field]?.toString().toLowerCase().includes(lower)
+            )
         );
 
         setFoundObjs(results);
@@ -155,17 +173,25 @@ export const ObjProvider = ({ obj, children }) => {
     }
 
     const sortData = (data) => {
-        return data.sort((a, b) => {
-            const lastCompare = (a?.last_name ?? "").localeCompare(b?.last_name ?? "");
-            if (lastCompare !== 0) return lastCompare;
-            return (a?.first_name ?? "").localeCompare(b?.first_name ?? "");
+    const sortByFields = modelConfig[obj]?.sortBy || [];
+    if (!sortByFields.length) return data;
+        return [...data].sort((a, b) => {
+            for (const field of sortByFields) {
+                const aVal = a?.[field] ?? "";
+                const bVal = b?.[field] ?? "";
+                const compare = aVal.toString().localeCompare(bVal.toString());
+                if (compare !== 0) return compare;
+            }
+            return 0;
         });
     };
+
 
     // Context values passed to children
     const value = {
         obj,
         objData,
+        modelConfig,
         updateObjData,
         setLoading,
         setError,
@@ -186,3 +212,4 @@ export const ObjProvider = ({ obj, children }) => {
         {children}
     </ObjContext.Provider>;
 }
+

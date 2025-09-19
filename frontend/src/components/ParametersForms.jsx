@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import validateCuit from '../myScripts/myMainScript';
-import { useObjContext } from '../context/ParametersContext';
+import { useObjContext } from '../context/CrudContext';
 
 function FormOwner({ formRef, initialData }) {
     const { submitForm } = useObjContext();

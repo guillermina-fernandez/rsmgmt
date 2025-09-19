@@ -1,5 +1,5 @@
 
-import { useObjContext } from "../context/ParametersContext";
+import { useObjContext } from "../context/CrudContext";
 
 function Table({ cols }) {
 

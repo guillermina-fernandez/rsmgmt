@@ -15,7 +15,7 @@ from parameters.models import Owner, Tenant, RealStateType
 models_dic = {
     'propietario': Owner,
     'inquilino': Tenant,
-    'tipo_de_propiedad': RealStateType
+    'tipo_de_propiedad': RealStateType,
 }
 
 
@@ -142,3 +142,26 @@ def delete_object(request, model_name, obj_id):
     except LookupError:
         return Response({'error': f'Nombre de modelo inválido ({model_name}).'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+
+
+"""
+
+class PersonFlatSerializer(serializers.ModelSerializer):
+    dog_name = serializers.CharField(source='dog.dog_name')
+    dog_country = serializers.CharField(source='dog.nationality.country')
+
+    class Meta:
+        model = Person
+        fields = ['person_name', 'dog_name', 'dog_country']
+Result in React:
+
+json
+Copiar código
+{
+  "person_name": "Alice",
+  "dog_name": "Rex",
+  "dog_country": "Germany"
+}
+
+"""

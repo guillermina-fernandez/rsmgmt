@@ -1,8 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import './App.css'
-import Parameters from './pages/Parameters'
-import RealStates from './pages/RealStates'
-import { ObjProvider } from './context/ParametersContext'
+import Crud from './pages/Crud'
+import { ObjProvider } from './context/CrudContext'
 
 function App() {
   return (
@@ -10,22 +9,22 @@ function App() {
       <Routes>
         <Route path="/propietario" element={
           <ObjProvider obj="propietario">
-            <Parameters />
+            <Crud />
           </ObjProvider>
         } />
         <Route path="/inquilino" element={
           <ObjProvider obj="inquilino">
-            <Parameters />
+            <Crud />
           </ObjProvider>
         } />
         <Route path="/tipo_de_propiedad" element={
           <ObjProvider obj="tipo_de_propiedad">
-            <Parameters />
+            <Crud />
           </ObjProvider>
         } />
         <Route path="/propiedad" element={
           <ObjProvider obj="propiedad">
-            <RealStates />
+            
           </ObjProvider>
         } />
       </Routes>
