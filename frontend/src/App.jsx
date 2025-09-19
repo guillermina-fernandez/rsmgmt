@@ -17,6 +17,11 @@ function App() {
             <Parameter />
           </ObjProvider>
         } />
+        <Route path="/tipo_de_propiedad" element={
+          <ObjProvider obj="tipo_de_propiedad">
+            <Parameter />
+          </ObjProvider>
+        } />
       </Routes>
     </main>
   )

@@ -10,7 +10,7 @@ class Owner(models.Model):
     cuit = models.CharField(max_length=13, validators=[validate_cuit], unique=True)
 
     class Meta:
-        ordering = ('last_name', 'first_name')
+        ordering = ('last_name', 'first_name', )
 
     def __str__(self):
         return f'{self.last_name} {self.first_name}'
@@ -27,3 +27,9 @@ class Tenant(models.Model):
     def __str__(self):
         return f'{self.last_name} {self.first_name}'
 
+
+class RealStateType(models.Model):
+    rs_type = models.CharField(max_length=20, unique=True)
+
+    class Meta:
+        ordering = ('rs_type', )

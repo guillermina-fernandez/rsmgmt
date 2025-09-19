@@ -19,6 +19,9 @@ function NavBar() {
                             <li>
                                 <Link className="dropdown-item" to="/inquilino">Inquilinos</Link>
                             </li>
+                            <li>
+                                <Link className="dropdown-item" to="/tipo_de_propiedad">Tipos de propiedades</Link>
+                            </li>
                         </ul>
                     </li>
                 </ul>

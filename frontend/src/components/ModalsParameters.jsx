@@ -40,4 +40,31 @@ function FormOwner({ formRef, initialData }) {
     );
 }
 
-export default FormOwner;
+
+function FormRsType({ formRef, initialData }) {
+    const { submitForm } = useObjContext();
+    const { register, handleSubmit, formState: { errors }, reset } = useForm()
+
+    useEffect(() => {
+        if (initialData) reset(initialData);
+    }, [initialData, reset]);
+
+    const onSubmit = handleSubmit((data) => {
+        if (initialData?.id) {
+            submitForm({ ...initialData, ...data }, "update");
+        } else {
+            submitForm(data, "create");
+        }
+    });
+
+    return (
+        <form ref={formRef} onSubmit={onSubmit}>
+            <div className="w-100">
+                <label htmlFor='rs_type'>TIPO DE PROPIEDAD</label>
+                <input className="form-control form-control-sm" id="rs_type" name="rs_type" {...register('rs_type')} required/>
+            </div>
+        </form>
+    )
+}
+
+export { FormOwner, FormRsType };

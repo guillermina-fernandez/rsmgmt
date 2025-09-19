@@ -11,7 +11,8 @@ function Table({ cols }) {
     }
 
     const handleEdit = (editObj) => {
-        const newModalTitle = `Editar ${String(obj[0]).toUpperCase() + String(obj).slice(1)}`
+        const objTitle = String(obj[0]).toUpperCase() + String(obj).slice(1)
+        const newModalTitle = `Editar ${objTitle.replaceAll('_', ' ')}`
         openModal(newModalTitle);
         setEditObj(editObj)
     }
@@ -22,15 +23,16 @@ function Table({ cols }) {
                 <thead>
                     <tr>
                         {cols.map((col, index) => <th key={`col${index}`} className="text-start">{col}</th>)}
+                        <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {showData.map((obj) =>
                         <tr key={obj.id} className="text-start">
-                            <td style={{ verticalAlign: "middle" }}>{obj.id}</td>
-                            <td style={{ verticalAlign: "middle" }}>{obj.last_name}</td>
-                            <td style={{ verticalAlign: "middle" }}>{obj.first_name}</td>
-                            <td style={{ verticalAlign: "middle" }}>{obj.cuit}</td>
+                            {Object.keys(obj).map((key, index) => (
+                                <td key={index} style={{ verticalAlign: "middle" }}>{ obj[key] }</td>
+                            ))}
                             <td style={{ width: "10px" }}>
                                 <button className="btn btn-sm btn-danger" type="button" onClick={() => handleDelete(obj.id)}><i className="bi bi-trash3"></i></button>
                             </td>
