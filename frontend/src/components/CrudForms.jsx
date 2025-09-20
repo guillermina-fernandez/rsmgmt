@@ -50,6 +50,7 @@ function FormRealState({ formRef, initialData }) {
             TODO: 
             * componente tablita -> <- tablita para agregar/sacar propietarios y usufructuarios con un fetch de cada modelo
             * componente select para tipo de propiedad con un fetch del modelo
+            * Crear otro componente <Table> ya que en editar no quiero que abra el modal, sino que vaya a la página específica de esa propiedad. Ya en esa página podré editarla junto con el resto de campos.
             
             */}
         </form>
