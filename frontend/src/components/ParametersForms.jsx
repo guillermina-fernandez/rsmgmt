@@ -2,22 +2,10 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import validateCuit from '../myScripts/myMainScript';
 import { useObjContext } from '../context/CrudContext';
+import { useFormHandler } from '../myScripts/useFormHandler';
 
 function FormOwner({ formRef, initialData }) {
-    const { submitForm } = useObjContext();
-    const { register, handleSubmit, formState: { errors }, reset } = useForm()
-
-    useEffect(() => {
-        if (initialData) reset(initialData);
-    }, [initialData, reset]);
-
-    const onSubmit = handleSubmit((data) => {
-        if (initialData?.id) {
-            submitForm({ ...initialData, ...data }, "update");
-        } else {
-            submitForm(data, "create");
-        }
-    });
+    const { register, onSubmit, errors } = useFormHandler(initialData);
     
     return (
         <form ref={formRef} onSubmit={onSubmit}>
@@ -42,20 +30,7 @@ function FormOwner({ formRef, initialData }) {
 
 
 function FormRsType({ formRef, initialData }) {
-    const { submitForm } = useObjContext();
-    const { register, handleSubmit, formState: { errors }, reset } = useForm()
-
-    useEffect(() => {
-        if (initialData) reset(initialData);
-    }, [initialData, reset]);
-
-    const onSubmit = handleSubmit((data) => {
-        if (initialData?.id) {
-            submitForm({ ...initialData, ...data }, "update");
-        } else {
-            submitForm(data, "create");
-        }
-    });
+    const { register, onSubmit } = useFormHandler(initialData);
 
     return (
         <form ref={formRef} onSubmit={onSubmit}>

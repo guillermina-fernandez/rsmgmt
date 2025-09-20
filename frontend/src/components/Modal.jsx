@@ -7,7 +7,7 @@ function Modal() {
     
     const { obj, closeModal, editObj, modalTitle } = useObjContext();
 
-    const formRef = useRef();
+    const formRef = useRef(null);
 
     function handleClick() {
         if (formRef.current) {
