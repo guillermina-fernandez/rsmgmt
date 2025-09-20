@@ -1,4 +1,3 @@
-from rest_framework import serializers
 from rest_framework.decorators import api_view
 # from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -8,57 +7,31 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import ProtectedError, RestrictedError
 
-from common.validators import UniqueTogetherWithNullAsEmpty, normalize_form_data
+from common.validators import normalize_form_data
+
+from .serializers import get_serializer_class, RealStateCustomSerializer
 
 from parameters.models import Owner, Tenant, RealStateType
+from realstate.models import RealState
 
 models_dic = {
     'propietario': Owner,
     'inquilino': Tenant,
     'tipo_de_propiedad': RealStateType,
+    'propiedad': RealState
 }
-
-
-def get_serializer_class(model_obj, field_names, depth_nbr):
-    meta_validators = []
-
-    if hasattr(model_obj._meta, 'unique_together'):
-        for fields in model_obj._meta.unique_together:
-            meta_validators.append(
-                UniqueTogetherWithNullAsEmpty(
-                    queryset=model_obj.objects.all(),
-                    fields=fields,
-                    model=model_obj
-                )
-            )
-
-    if hasattr(model_obj._meta, 'constraints'):
-        for constraint in model_obj._meta.constraints:
-            constraint_fields = getattr(constraint, 'fields', None)
-            if constraint_fields:
-                meta_validators.append(
-                    UniqueTogetherWithNullAsEmpty(
-                        queryset=model_obj.objects.all(),
-                        fields=constraint_fields,
-                        model=model_obj
-                    )
-                )
-
-    class CustomSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = model_obj
-            fields = '__all__' if field_names == '__all__' else tuple(field_names)
-            depth = depth_nbr
-
-    return CustomSerializer
 
 
 @api_view(('GET', ))
 def fetch_objects(request, model_name):
-    serializer_class = get_serializer_class(
-        models_dic[model_name], '__all__', 0
-    )
-    serializer = serializer_class(models_dic[model_name].objects.all(), many=True)
+    if model_name == 'propiedad':
+        serializer = RealStateCustomSerializer(RealState.objects.all(), many=True)
+    else:
+        serializer_class = get_serializer_class(
+            models_dic[model_name], '__all__', 0
+        )
+        serializer = serializer_class(models_dic[model_name].objects.all(), many=True)
+
     return Response([serializer.data])
 
 

@@ -24,7 +24,7 @@ function App() {
         } />
         <Route path="/propiedad" element={
           <ObjProvider obj="propiedad">
-            
+            <Crud />
           </ObjProvider>
         } />
       </Routes>

@@ -12,7 +12,7 @@ export const fetchObjData = async (obj) => {
         }
         throw new Error(message);
     }
-
+    
     return await response.json();
 };
 

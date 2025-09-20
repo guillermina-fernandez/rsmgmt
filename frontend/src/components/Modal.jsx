@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { useObjContext } from '../context/CrudContext';
-import {FormOwner, FormRsType} from './ParametersForms';
+import {FormOwner, FormRsType} from './CrudForms';
 
 
 function Modal() {

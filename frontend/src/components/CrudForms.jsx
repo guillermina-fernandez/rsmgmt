@@ -1,7 +1,4 @@
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
 import validateCuit from '../myScripts/myMainScript';
-import { useObjContext } from '../context/CrudContext';
 import { useFormHandler } from '../myScripts/useFormHandler';
 
 function FormOwner({ formRef, initialData }) {
@@ -42,4 +39,21 @@ function FormRsType({ formRef, initialData }) {
     )
 }
 
-export { FormOwner, FormRsType };
+
+function FormRealState({ formRef, initialData }) {
+    const { register, onSubmit } = useFormHandler(initialData);
+
+    return (
+        <form ref={formRef} onSubmit={onSubmit}>
+            {/* 
+            
+            TODO: 
+            * componente tablita -> <- tablita para agregar/sacar propietarios y usufructuarios con un fetch de cada modelo
+            * componente select para tipo de propiedad con un fetch del modelo
+            
+            */}
+        </form>
+    )
+}
+
+export { FormOwner, FormRsType, FormRealState};

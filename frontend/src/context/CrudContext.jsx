@@ -17,6 +17,11 @@ const modelConfig = {
         searchBy: ["rs_type"],
         sortBy: ["rs_type"],
     },
+    propiedad: {
+        columns: ["COD", "PROPIEDAD", "TIPO", "COCHERA", "PROPIETARIO/S", "USUFRUCTO", "OBS"],
+        searchBy: ["rs_name", "owners", "usufructs"],
+        sortBy: ["rs_name"],
+    }
 }
 
 const ObjContext = createContext();
