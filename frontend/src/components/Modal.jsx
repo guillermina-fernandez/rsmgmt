@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { useObjContext } from '../context/CrudContext';
-import {FormOwner, FormRsType} from './CrudForms';
+import {FormOwner, FormRealState, FormRsType} from './CrudForms';
 
 
 function Modal() {
@@ -27,6 +27,7 @@ function Modal() {
                         {obj === 'propietario' && <FormOwner formRef={formRef} initialData={editObj}></FormOwner>}
                         {obj === 'inquilino' && <FormOwner formRef={formRef} initialData={editObj}></FormOwner>}
                         {obj === "tipo_de_propiedad" && <FormRsType formRef={formRef} initialData={editObj}></FormRsType>}
+                        {obj === 'propiedad' && <FormRealState formRef={formRef}></FormRealState>}
                     </div>
                     <hr/>
                     <div className="hstack">

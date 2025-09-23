@@ -28,16 +28,16 @@ function Table({ cols }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {showData.map((obj) =>
-                        <tr key={obj.id} className="text-start">
-                            {Object.keys(obj).map((key, index) => (
-                                <td key={index} style={{ verticalAlign: "middle" }}>{ obj[key] }</td>
+                    {showData.map((dataItem) =>
+                        <tr key={dataItem.id} className="text-start">
+                            {Object.keys(dataItem).map((key, index) => (
+                                <td key={index} style={{ verticalAlign: "middle" }}>{ dataItem[key] }</td>
                             ))}
                             <td style={{ width: "10px" }}>
-                                <button className="btn btn-sm btn-danger" type="button" onClick={() => handleDelete(obj.id)}><i className="bi bi-trash3"></i></button>
+                                <button className="btn btn-sm btn-danger" type="button" onClick={() => handleDelete(dataItem.id)}><i className="bi bi-trash3"></i></button>
                             </td>
                             <td style={{ width: "10px" }}>
-                                <button className="btn btn-sm btn-success" type="button" onClick={() => handleEdit(obj)}><i className="bi bi-pencil-square"></i></button>
+                                <button className="btn btn-sm btn-success" type="button" onClick={() => handleEdit(dataItem)}><i className="bi bi-pencil-square"></i></button>
                             </td>
                         </tr>
                     )}

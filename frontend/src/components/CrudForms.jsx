@@ -45,12 +45,29 @@ function FormRealState({ formRef, initialData }) {
 
     return (
         <form ref={formRef} onSubmit={onSubmit}>
-            {/* 
+            <div className="w-100">
+                <div className="hstack w-100">
+                    <div>
+                        <label htmlFor='address'>DIRECCION</label>
+                        <input className="form-control form-control-sm" id="address" name="address" {...register('address')} required/>
+                    </div>
+                    <div className="ms-2">
+                        <label htmlFor='floor'>PISO</label>
+                        <input className="form-control form-control-sm" id="floor" name="floor" {...register('floor')} type="number" step="1"/>
+                    </div>
+                    <div className="ms-2">
+                        <label htmlFor='unit'>UNIDAD</label>
+                        <input className="form-control form-control-sm" id="unit" name="unit" {...register('unit')} type="number" step="1" min="0"/>
+                    </div>
+                </div>
+                
+            </div>
+            {/*
             
-            TODO: 
+            TODO:
+            * cambiar arriba, si es depto, renderizar componente piso, unidad, cochera.
             * componente tablita -> <- tablita para agregar/sacar propietarios y usufructuarios con un fetch de cada modelo
             * componente select para tipo de propiedad con un fetch del modelo
-            * Crear otro componente <Table> ya que en editar no quiero que abra el modal, sino que vaya a la página específica de esa propiedad. Ya en esa página podré editarla junto con el resto de campos.
             
             */}
         </form>
