@@ -1,4 +1,3 @@
-import NavBar from "../components/NavBar";
 import SearchBar from "../components/SearchBar";
 import Table from "../components/Table";
 import TableRealStates from "../components/TableRealStates";
@@ -11,7 +10,6 @@ function Crud() {
 
     return (
         <div>
-            <NavBar/>
             <SearchBar obj={obj} />
             {obj == 'propiedad' ? <TableRealStates /> : <Table cols={modelConfig[obj]["columns"]} />}
             {showModal && <Modal />}

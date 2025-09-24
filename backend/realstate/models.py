@@ -28,3 +28,17 @@ class RealState(models.Model):
     class Meta:
         unique_together = ('address', 'floor', 'unit', )
         ordering = ('address', 'floor', 'unit', )
+
+
+class Tax(models.Model):
+    real_state = models.ForeignKey(RealState, related_name='tax_rs', on_delete=models.CASCADE)
+    tax = models.CharField(max_length=50)
+    tax_nbr1 = models.CharField(max_length=50)
+    tax_nbr2 = models.CharField(max_length=50, blank=True, null=True)
+    taxed_person = models.CharField(max_length=60, blank=True, null=True)
+    observations = models.CharField(max_length=500, blank=True, null=True)
+
+    class Meta:
+        unique_together = ('tax_nbr1', 'tax_nbr2', )
+        ordering = ('tax', 'tax_nbr1', 'tax_nbr2', )
+

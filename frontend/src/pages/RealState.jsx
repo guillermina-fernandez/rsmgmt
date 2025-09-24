@@ -1,5 +1,8 @@
 import { useRsContext } from "../context/RsContext";
 import { spanishDate } from "../myScripts/myMainScript";
+import Modal from "../components/Modal";
+import { useObjContext } from "../context/CrudContext";
+import { ObjProvider } from "../context/CrudContext";
 
 function get_name(address, floor, unit) {
     let rs_name = address || ""
@@ -44,7 +47,7 @@ function RsTable({objData}) {
     const usufructuaries = get_persons(objData.usufruct)
 
     return (
-        <table className="custom-fix-table">
+        <table className="custom-fix-table border">
             <tbody>
                 <tr>
                     <th>Tipo:</th>
@@ -75,6 +78,35 @@ function RsTable({objData}) {
     )
 }
 
+
+function Taxes() {
+    const { obj, openModal, showModal } = useObjContext();
+    const obj_name_title = String(obj[0]).toUpperCase() + String(obj).slice(1)
+    const newModalTitle = `Agregar ${obj_name_title.replaceAll('_', ' ')}`
+    
+    return (
+        <>
+            {showModal && <Modal />}
+            <div className="hstack">
+                <h4>IMPUESTOS</h4>
+                <button type="button" className="btn btn-primary btn-sm ms-3" onClick={() => openModal(newModalTitle)}>+</button>
+            </div>
+            <table className="custom-fix-table border">
+                <thead>
+                    <tr>
+                        <th>NOMBRE</th>
+                        <th>NRO</th>
+                        <th>NRO SEC</th>
+                        <th>TITULAR</th>
+                        <th>OBS</th>
+                    </tr>
+                </thead>
+            </table>
+        </>
+    )
+}
+
+
 function RealState() {
     const { objData } = useRsContext();
 
@@ -83,8 +115,18 @@ function RealState() {
     return (
         <>
             <h1>{rs_name}</h1>
-            <div className="mt-5 border" style={{width: "50%"}}>
-                {objData && <RsTable objData={objData} />}
+            <div className="w-100 mt-5">
+                <div className="hstack w-100">
+                    <div style={{ width: "40%", minHeight: "300px" }}>
+                        <h4 className="text-start">DATOS</h4>
+                        {objData && <RsTable objData={objData} />}
+                    </div>
+                    <div className="ms-5" style={{ width: "60%", minHeight: "300px" }}>
+                        <ObjProvider obj="impuesto">
+                            <Taxes />
+                        </ObjProvider>
+                    </div>
+                </div>
             </div>
         </>
     )

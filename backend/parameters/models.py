@@ -33,3 +33,4 @@ class RealStateType(models.Model):
 
     class Meta:
         ordering = ('rs_type', )
+

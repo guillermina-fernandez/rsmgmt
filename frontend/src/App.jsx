@@ -4,10 +4,13 @@ import Crud from './pages/Crud'
 import { ObjProvider } from './context/CrudContext'
 import { RsProvider } from './context/RsContext'
 import RealState from './pages/RealState'
+import NavBar from './components/NavBar'
+
 
 function App() {
   return (
     <main>
+      <NavBar/>
       <Routes>
         <Route path="/propietario" element={
           <ObjProvider obj="propietario">

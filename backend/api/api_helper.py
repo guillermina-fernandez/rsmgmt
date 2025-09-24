@@ -12,13 +12,14 @@ from common.validators import normalize_form_data
 from .serializers import get_serializer_class, RealStateCustomSerializer
 
 from parameters.models import Owner, Tenant, RealStateType
-from realstate.models import RealState
+from realstate.models import RealState, Tax
 
 models_dic = {
     'propietario': Owner,
     'inquilino': Tenant,
     'tipo_de_propiedad': RealStateType,
-    'propiedad': RealState
+    'propiedad': RealState,
+    'impuesto': Tax
 }
 
 

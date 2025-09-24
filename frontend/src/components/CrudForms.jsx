@@ -152,4 +152,19 @@ function FormRealState({ formRef }) {
     )
 }
 
-export { FormOwner, FormRsType, FormRealState};
+
+function FormTax({ formRef, initialData }) {
+    const { register, onSubmit } = useFormHandler(initialData);
+
+    return (
+        <form ref={formRef} onSubmit={onSubmit}>
+            <div className="w-100">
+                <label htmlFor='rs_type'>TIPO DE PROPIEDAD</label>
+                <input className="form-control form-control-sm" id="rs_type" name="rs_type" {...register('rs_type')} required/>
+            </div>
+        </form>
+    )
+}
+
+
+export { FormOwner, FormRsType, FormRealState, FormTax};
