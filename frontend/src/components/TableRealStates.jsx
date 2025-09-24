@@ -3,7 +3,7 @@ import { useObjContext } from "../context/CrudContext";
 
 function TableRealStates() {
 
-    const { obj, objData, foundObjs } = useObjContext();
+    const { objData, foundObjs } = useObjContext();
 
     let showData = objData;
     if (foundObjs) {

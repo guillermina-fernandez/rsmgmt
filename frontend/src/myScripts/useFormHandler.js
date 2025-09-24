@@ -4,7 +4,7 @@ import { useObjContext } from '../context/CrudContext';
 
 export const useFormHandler = (initialData) => {
     const { submitForm } = useObjContext();
-    const { register, handleSubmit, formState: { errors }, reset } = useForm();
+    const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
 
     useEffect(() => {
         if (initialData) reset(initialData);
@@ -18,5 +18,5 @@ export const useFormHandler = (initialData) => {
         }
     });
 
-    return { register, onSubmit, errors };
+    return { register, onSubmit, errors, setValue };
 }

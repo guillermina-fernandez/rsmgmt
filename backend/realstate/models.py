@@ -10,7 +10,7 @@ class RealState(models.Model):
     unit = models.IntegerField(blank=True, null=True)
     rs_type = models.ForeignKey(RealStateType, related_name='rs_rs_type', on_delete=models.RESTRICT)
     has_garage = models.CharField(max_length=2, default='NO')
-    owner = models.ManyToManyField(Owner, related_name='rs_owner')
+    owner = models.ManyToManyField(Owner, related_name='rs_owner', blank=True)
     usufruct = models.ManyToManyField(Owner, related_name='rs_usufruct', blank=True)
     buy_date = models.DateField(blank=True, null=True)
     buy_value = models.CharField(max_length=100, blank=True, null=True)

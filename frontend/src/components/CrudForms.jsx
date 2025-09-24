@@ -1,5 +1,9 @@
+import { useEffect, useState } from 'react';
 import validateCuit from '../myScripts/myMainScript';
 import { useFormHandler } from '../myScripts/useFormHandler';
+import { fetchObjData } from '../services/api_crud';
+import { useObjContext } from '../context/CrudContext';
+import TableChecks from './TableChecks';
 
 function FormOwner({ formRef, initialData }) {
     const { register, onSubmit, errors } = useFormHandler(initialData);
@@ -40,36 +44,110 @@ function FormRsType({ formRef, initialData }) {
 }
 
 
-function FormRealState({ formRef, initialData }) {
-    const { register, onSubmit } = useFormHandler(initialData);
+function FormRealState({ formRef }) {
+    const { register, onSubmit, setValue} = useFormHandler(null);
+    const { setError, setLoading } = useObjContext()
+    
+    const [rsTypes, setRsTypes] = useState(null);
+    const [ownersData, setOwnersData] = useState(null);
+    const [selectedOwners, setSelectedOwners] = useState([]);
+    const [selectedUsufructs, setSelectedUsufructs] = useState([]);
+
+    useEffect(() => {
+        setValue('owner', selectedOwners);
+        setValue('usufruct', selectedUsufructs);
+    }, [selectedOwners, selectedUsufructs, setValue])
+
+    useEffect(() => {
+        const loadTypes = async () => {
+            try {
+                const fetchedData = await fetchObjData('tipo_de_propiedad');
+                const flatData = Array.isArray(fetchedData) ? fetchedData.flat() : [];
+                setRsTypes(flatData)
+            } catch (err) {
+                setError(err);
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        const loadOwners = async () => {
+            try {
+                const fetchedData = await fetchObjData('propietario');
+                const flatData = Array.isArray(fetchedData) ? fetchedData.flat() : [];
+                setOwnersData(flatData)
+            } catch (err) {
+                setError(err);
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        loadTypes();
+        loadOwners();
+
+        return () => { }
+        
+    }, []);
 
     return (
         <form ref={formRef} onSubmit={onSubmit}>
-            <div className="w-100">
-                <div className="hstack w-100">
-                    <div>
-                        <label htmlFor='address'>DIRECCION</label>
-                        <input className="form-control form-control-sm" id="address" name="address" {...register('address')} required/>
-                    </div>
-                    <div className="ms-2">
-                        <label htmlFor='floor'>PISO</label>
-                        <input className="form-control form-control-sm" id="floor" name="floor" {...register('floor')} type="number" step="1"/>
-                    </div>
-                    <div className="ms-2">
-                        <label htmlFor='unit'>UNIDAD</label>
-                        <input className="form-control form-control-sm" id="unit" name="unit" {...register('unit')} type="number" step="1" min="0"/>
-                    </div>
-                </div>
-                
+            <div className='w-100'>
+                <label htmlFor="rs_type">TIPO</label>
+                <select className="form-select form-select-sm" id="rs_type" name="rs_type" {...register('rs_type')} defaultValue="" required>
+                    <option key="0" value="" disabled></option>
+                    {rsTypes && rsTypes.map((opt) => (
+                        <option key={opt.id} value={opt.id}>{opt.rs_type}</option>
+                    ))}
+                </select>
             </div>
-            {/*
-            
-            TODO:
-            * cambiar arriba, si es depto, renderizar componente piso, unidad, cochera.
-            * componente tablita -> <- tablita para agregar/sacar propietarios y usufructuarios con un fetch de cada modelo
-            * componente select para tipo de propiedad con un fetch del modelo
-            
-            */}
+            <div className="w-100 mt-3">
+                <label htmlFor='address'>DIRECCION</label>
+                <input className="form-control form-control-sm" id="address" name="address" {...register('address')} required/>
+            </div>
+            <div className="hstack w-100 mt-3">
+                <div className='w-100'>
+                    <label htmlFor='floor'>PISO</label>
+                    <input className="form-control form-control-sm" id="floor" name="floor" {...register('floor')} type="number" step="1"/>
+                </div>
+                <div className='w-100 ms-2'>
+                    <label htmlFor='unit'>UNIDAD</label>
+                    <input className="form-control form-control-sm" id="unit" name="unit" {...register('unit')} type="number" step="1" min="0"/>
+                </div>
+                <div className='w-100 ms-2'>
+                    <label htmlFor='has_garage'>CON COCHERA</label>
+                    <select className="form-select form-select-sm" id="has_garage" name="has_garage" {...register('has_garage')}>
+                        <option value="NO">NO</option>
+                        <option value="SI">SI</option>
+                    </select>
+                </div>
+            </div>
+            <hr></hr>
+            <div className="w-100 mt-3">
+                <label className='mb-2'>PROPIETARIO/S</label>
+                <TableChecks searchObj="Buscar Propietario..." objs={ownersData} onSelectionChange={setSelectedOwners}/>
+            </div>
+            <div className="w-100 mt-3">
+                <label className='mb-2'>USUFRUCTO</label>
+                <TableChecks searchObj="Buscar Usufructuario..." objs={ownersData} onSelectionChange={setSelectedUsufructs}/>
+            </div>
+            <hr></hr>
+            <div className="hstack w-100 mt-3">
+                <div className='w-100'>
+                    <label htmlFor='buy_date'>FECHA COMPRA</label>
+                    <input className="form-control form-control-sm" id="buy_date" name="buy_date" type="date" {...register('buy_date')} />
+                </div>
+                <div className='w-100 ms-2'>
+                    <label htmlFor='buy_value'>VALOR COMPRA</label>
+                    <input className="form-control form-control-sm" id='buy_value' name='buy_value' {...register('buy_value')} />
+                </div>
+            </div>
+            <div className='w-100 mt-3'>
+                <label htmlFor='observations'>OBSERVACIONES</label>
+                <textarea className="form-control form-control-sm" id="observations" name="observations" {...register('observations')}></textarea>
+            </div>
         </form>
     )
 }

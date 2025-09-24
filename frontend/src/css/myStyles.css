@@ -1,3 +1,28 @@
 .centered-placeholder::placeholder {
   text-align: center;
 }
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  table-layout: auto;
+}
+
+.custom-table th,
+.custom-table td {
+  padding: 0.3rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
+}
+
+.custom-table th {
+  background-color: #d6dbdf;
+}
+
+.custom-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}

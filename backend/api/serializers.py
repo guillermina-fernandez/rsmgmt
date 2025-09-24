@@ -34,6 +34,7 @@ def get_serializer_class(model_obj, field_names, depth_nbr):
             model = model_obj
             fields = '__all__' if field_names == '__all__' else tuple(field_names)
             depth = depth_nbr
+            validators = meta_validators
 
     return CustomSerializer
 
@@ -88,5 +89,6 @@ class RealStateCustomSerializer(serializers.ModelSerializer):
 
     def get_usufructs(self, obj):
         return ", ".join(f"{u.last_name} {u.first_name}" for u in obj.usufruct.all())
+
 
 RealStateCustomSerializer.attach_validators()

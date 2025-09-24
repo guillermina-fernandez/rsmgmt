@@ -32,18 +32,23 @@ class UniqueTogetherWithNullAsEmpty:
         self.fields = fields
         self.model = model
         self.message = message or (
-            f"Combination of {fields} must be unique (treating null as empty)"
+            f"Combination of {fields} must be unique (treating null/empty as empty)"
             f"{' in ' + model.__name__ if model else ''}."
         )
+
+    def normalize(self, value):
+        if value is None:
+            return ''
+        if isinstance(value, str) and value.strip() == '':
+            return ''
+        return value
 
     def __call__(self, attrs, serializer=None):
         instance = getattr(serializer, "instance", None)
         instance_pk = getattr(instance, "pk", None)
 
-        # Build comparison dictionary
-        compare = {f: attrs.get(f, None) for f in self.fields}
+        compare = {f: self.normalize(attrs.get(f, None)) for f in self.fields}
 
-        # Iterate DB objects, skipping self
         qs = self.queryset
         if instance_pk:
             qs = qs.exclude(pk=instance_pk)
@@ -51,10 +56,8 @@ class UniqueTogetherWithNullAsEmpty:
         for obj in qs:
             match = True
             for f in self.fields:
-                val = getattr(obj, f)
-                if val is None and compare[f] is None:
-                    continue  # treat both None as equal
-                if val != compare[f]:
+                obj_val = self.normalize(getattr(obj, f))
+                if obj_val != compare[f]:
                     match = False
                     break
             if match:
@@ -63,8 +66,8 @@ class UniqueTogetherWithNullAsEmpty:
 
 def normalize_form_data(model_obj, form_data):
     def to_int_or_keep(value):
-        if value in (None, ""):
-            return value
+        if value in (None, ''):
+            return None
         try:
             return int(value)
         except (TypeError, ValueError):
@@ -72,11 +75,16 @@ def normalize_form_data(model_obj, form_data):
 
     def to_float_or_keep(value):
         if value in (None, ""):
-            return value
+            return None
         try:
             return float(value)
         except (TypeError, ValueError):
             return value
+
+    def to_date_or_none(value):
+        if value in (None, ""):
+            return None
+        return value
 
     normalized = {}
 
@@ -96,6 +104,8 @@ def normalize_form_data(model_obj, form_data):
             normalized[name] = to_float_or_keep(value)
         elif isinstance(field, (models.ForeignKey, models.OneToOneField)):
             normalized[name] = to_int_or_keep(value)
+        elif isinstance(field, models.DateField):
+            normalized[name] = to_date_or_none(value)
         else:
             normalized[name] = value
 
@@ -115,3 +125,4 @@ def normalize_form_data(model_obj, form_data):
             normalized[name] = []
 
     return normalized
+
