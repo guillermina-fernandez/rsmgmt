@@ -35,6 +35,29 @@ def fetch_objects(request, model_name):
     return Response([serializer.data])
 
 
+@api_view(('GET', ))
+def fetch_object(request, model_name, obj_id):
+    if not model_name:
+        return Response({'error': 'No se ha determinado un modelo.'}, status=status.HTTP_400_BAD_REQUEST)
+    if not obj_id:
+        return Response({'error': 'No se ha determinado un id.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer_class = get_serializer_class(
+        models_dic[model_name], '__all__', 1
+    )
+
+    try:
+        obj = models_dic[model_name].objects.get(id=int(obj_id))
+        serializer = serializer_class(instance=obj)
+        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+    except ValidationError as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except models_dic[model_name].DoesNotExist:
+        return Response({'error': f'No se encontró el objeto del modelo {model_name} con id {obj_id}.'}, status=status.HTTP_404_NOT_FOUND)
+    except LookupError:
+        return Response({'error': f'Nombre de modelo inválido ({model_name}).'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(('POST', ))
 def create_object(request, model_name):
     form_data = request.data

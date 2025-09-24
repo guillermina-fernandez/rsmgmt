@@ -2,6 +2,8 @@ import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import Crud from './pages/Crud'
 import { ObjProvider } from './context/CrudContext'
+import { RsProvider } from './context/RsContext'
+import RealState from './pages/RealState'
 
 function App() {
   return (
@@ -26,6 +28,11 @@ function App() {
           <ObjProvider obj="propiedad">
             <Crud />
           </ObjProvider>
+        } />
+        <Route path="/propiedad/:rs_id" element={
+          <RsProvider >
+              <RealState />
+          </RsProvider>
         } />
       </Routes>
     </main>

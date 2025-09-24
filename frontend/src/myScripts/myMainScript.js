@@ -25,4 +25,15 @@ const validateCuit = (value) => {
     return isValid || 'CUIT/CUIL Inválido.';
 };
 
-export default validateCuit;
+
+function spanishDate(eng_date) {
+  let new_date = new Date(eng_date);
+  let day = String(new_date.getUTCDate()).padStart(2, '0');
+  let month = String(new_date.getUTCMonth() + 1).padStart(2, '0');
+  let year = new_date.getUTCFullYear();
+  let spa_date = `${day}/${month}/${year}`;
+  return spa_date
+}
+
+
+export {validateCuit, spanishDate}

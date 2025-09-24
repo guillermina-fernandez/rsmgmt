@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import { fetchObjData, createObjDataAPI, updateObjDataAPI, deleteObjAPI } from "../services/api_crud";
+import { fetchObjsData, createObjDataAPI, updateObjDataAPI, deleteObjAPI } from "../services/api_crud";
 
 const modelConfig = {
     propietario: {
@@ -42,7 +42,7 @@ export const ObjProvider = ({ obj, children }) => {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const fetchedData = await fetchObjData(obj);
+                const fetchedData = await fetchObjsData(obj);
                 const flatData = Array.isArray(fetchedData) ? fetchedData.flat() : [];
                 setObjData(flatData);
             } catch (err) {

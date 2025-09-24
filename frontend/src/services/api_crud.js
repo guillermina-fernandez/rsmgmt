@@ -1,5 +1,5 @@
 // Fetch all objects
-export const fetchObjData = async (obj) => {
+export const fetchObjsData = async (obj) => {
     const response = await fetch(`http://127.0.0.1:8000/api/${obj}/`);
 
     if (!response.ok) {
@@ -15,6 +15,26 @@ export const fetchObjData = async (obj) => {
     
     return await response.json();
 };
+
+
+// Fetch one object
+export const fetchObjData = async (obj, obj_id) => {
+    const response = await fetch(`http://127.0.0.1:8000/api/${obj}/${obj_id}/`);
+
+    if (!response.ok) {
+        let message = `Error ${response.status}`;
+        try {
+            const result = await response.json();
+            message = result.error || JSON.stringify(result);
+        } catch {
+            
+        }
+        throw new Error(message);
+    }
+    
+    return await response.json();
+};
+
 
 // Create new record
 export const createObjDataAPI = async (obj, data) => {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import validateCuit from '../myScripts/myMainScript';
+import {validateCuit} from '../myScripts/myMainScript';
 import { useFormHandler } from '../myScripts/useFormHandler';
-import { fetchObjData } from '../services/api_crud';
+import { fetchObjsData } from '../services/api_crud';
 import { useObjContext } from '../context/CrudContext';
 import TableChecks from './TableChecks';
 
@@ -61,7 +61,7 @@ function FormRealState({ formRef }) {
     useEffect(() => {
         const loadTypes = async () => {
             try {
-                const fetchedData = await fetchObjData('tipo_de_propiedad');
+                const fetchedData = await fetchObjsData('tipo_de_propiedad');
                 const flatData = Array.isArray(fetchedData) ? fetchedData.flat() : [];
                 setRsTypes(flatData)
             } catch (err) {
@@ -74,7 +74,7 @@ function FormRealState({ formRef }) {
 
         const loadOwners = async () => {
             try {
-                const fetchedData = await fetchObjData('propietario');
+                const fetchedData = await fetchObjsData('propietario');
                 const flatData = Array.isArray(fetchedData) ? fetchedData.flat() : [];
                 setOwnersData(flatData)
             } catch (err) {
