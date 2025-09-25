@@ -10,7 +10,7 @@ function Crud() {
 
     return (
         <div>
-            <SearchBar obj={obj} />
+            <SearchBar />
             {obj == 'propiedad' ? <TableRealStates /> : <Table cols={modelConfig[obj]["columns"]} />}
             {showModal && <Modal />}
         </div>

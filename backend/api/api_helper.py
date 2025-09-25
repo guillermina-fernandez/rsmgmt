@@ -19,7 +19,7 @@ models_dic = {
     'inquilino': Tenant,
     'tipo_de_propiedad': RealStateType,
     'propiedad': RealState,
-    'impuesto': Tax
+    'impuesto': Tax,
 }
 
 
@@ -62,19 +62,16 @@ def fetch_object(request, model_name, obj_id):
 @api_view(('POST', ))
 def create_object(request, model_name):
     form_data = request.data
-
     if not form_data:
         return Response({'error': 'No se ha enviado la información.'}, status=status.HTTP_400_BAD_REQUEST)
     if not model_name:
         return Response({'error': 'No se ha determinado un modelo.'}, status=status.HTTP_400_BAD_REQUEST)
 
     form_data = normalize_form_data(models_dic[model_name], form_data)
-    print(form_data)
 
     serializer_class = get_serializer_class(models_dic[model_name], '__all__', 0)
     serializer = serializer_class(data=form_data)
     if serializer.is_valid():
-        print('serializer IS valid')
         try:
             instance = serializer.save()
             if model_name == 'propiedad':
@@ -83,7 +80,6 @@ def create_object(request, model_name):
         except ValidationError as e:
             return Response({'error': {'__all__': [str(e)]}}, status=status.HTTP_400_BAD_REQUEST)
     else:
-        print('serializer is NOT valid')
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 

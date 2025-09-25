@@ -138,6 +138,7 @@ export const ObjProvider = ({ obj, children }) => {
         setError(null);
         try {
             let responseData;
+            console.log(obj, data)
             if (mode === 'create') {
                 responseData = await createObjDataAPI(obj, data);
             } else {

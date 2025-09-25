@@ -127,11 +127,11 @@ function FormRealState({ formRef }) {
             <hr></hr>
             <div className="w-100 mt-3">
                 <label className='mb-2'>PROPIETARIO/S</label>
-                <TableChecks searchObj="Buscar Propietario..." objs={ownersData} onSelectionChange={setSelectedOwners}/>
+                <TableChecks objs={ownersData} onSelectionChange={setSelectedOwners}/>
             </div>
             <div className="w-100 mt-3">
                 <label className='mb-2'>USUFRUCTO</label>
-                <TableChecks searchObj="Buscar Usufructuario..." objs={ownersData} onSelectionChange={setSelectedUsufructs}/>
+                <TableChecks objs={ownersData} onSelectionChange={setSelectedUsufructs}/>
             </div>
             <hr></hr>
             <div className="hstack w-100 mt-3">
@@ -153,14 +153,35 @@ function FormRealState({ formRef }) {
 }
 
 
-function FormTax({ formRef, initialData }) {
+function FormTax({ rs_id, formRef, initialData }) {
     const { register, onSubmit } = useFormHandler(initialData);
 
     return (
         <form ref={formRef} onSubmit={onSubmit}>
+            <div>
+                <input type="number" id="real_state" name="real_state" value={rs_id} {...register('real_state')} hidden readOnly/>
+            </div>
             <div className="w-100">
-                <label htmlFor='rs_type'>TIPO DE PROPIEDAD</label>
-                <input className="form-control form-control-sm" id="rs_type" name="rs_type" {...register('rs_type')} required/>
+                <label htmlFor='tax'>TIPO</label>
+                <input className="form-control form-control-sm" id="tax" name="tax" placeholder='Nombre/Entidad...' {...register('tax')} required />
+            </div>
+            <div className='hstack mt-3'>
+                <div className='w-100'>
+                    <label htmlFor='tax_nbr1'>NÚMERO</label>
+                    <input className="form-control form-control-sm" id='tax_nbr1' name='tax_nbr1' {...register('tax_nbr1')} required/>
+                </div>
+                <div className='w-100 ms-2'>
+                    <label htmlFor='tax_nbr2'>NÚMERO SEC</label>
+                    <input className="form-control form-control-sm" id='tax_nbr2' name='tax_nbr2' {...register('tax_nbr2')}/>
+                </div>
+            </div>
+            <div className='w-100 mt-3'>
+                <label htmlFor="taxed_person">TITULAR</label>
+                <input className="form-control form-control-sm" id='taxed_person' name='taxed_person'{...register('taxed_person')} />
+            </div>
+            <div className='w-100 mt-3'>
+                <label htmlFor='observations'>OBSERVACIONES</label>
+                <input className="form-control form-control-sm" id='observations' name='observations' {...register('observations')} />
             </div>
         </form>
     )

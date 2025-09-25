@@ -20,9 +20,9 @@ from api.api_helper import fetch_objects, fetch_object, create_object, update_ob
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/<str:model_name>/', fetch_objects),
-    path('api/<str:model_name>/<str:obj_id>/', fetch_object),
     path('api/create/<str:model_name>/', create_object),
     path('api/update/<str:model_name>/<str:obj_id>/', update_object),
     path('api/delete/<str:model_name>/<str:obj_id>/', delete_object),
+    path('api/<str:model_name>/', fetch_objects),
+    path('api/<str:model_name>/<str:obj_id>/', fetch_object),
 ]

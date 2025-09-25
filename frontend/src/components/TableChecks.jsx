@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-function TableChecks({ searchObj, objs, onSelectionChange }) {
+function TableChecks({ objs, onSelectionChange }) {
     
     const [itemsChecked, setItemsChecked] = useState([]);
 

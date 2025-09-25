@@ -4,6 +4,7 @@ import Modal from "../components/Modal";
 import { useObjContext } from "../context/CrudContext";
 import { ObjProvider } from "../context/CrudContext";
 
+
 function get_name(address, floor, unit) {
     let rs_name = address || ""
     if (floor) {
@@ -79,19 +80,26 @@ function RsTable({objData}) {
 }
 
 
-function Taxes() {
-    const { obj, openModal, showModal } = useObjContext();
+function Taxes({rs_id}) {
+    const { obj, objData, openModal, showModal, handleDelete, setEditObj} = useObjContext();
     const obj_name_title = String(obj[0]).toUpperCase() + String(obj).slice(1)
     const newModalTitle = `Agregar ${obj_name_title.replaceAll('_', ' ')}`
-    
+
+    const handleEdit = (editObj) => {
+        const objTitle = String(obj[0]).toUpperCase() + String(obj).slice(1)
+        const newModalTitle = `Editar ${objTitle.replaceAll('_', ' ')}`
+        openModal(newModalTitle);
+        setEditObj(editObj)
+    }
+
     return (
         <>
-            {showModal && <Modal />}
+            {showModal && <Modal rs_id={rs_id} />}
             <div className="hstack">
                 <h4>IMPUESTOS</h4>
                 <button type="button" className="btn btn-primary btn-sm ms-3" onClick={() => openModal(newModalTitle)}>+</button>
             </div>
-            <table className="custom-fix-table border">
+            <table className="custom-table border">
                 <thead>
                     <tr>
                         <th>NOMBRE</th>
@@ -99,8 +107,28 @@ function Taxes() {
                         <th>NRO SEC</th>
                         <th>TITULAR</th>
                         <th>OBS</th>
+                        <th></th>
+                        <th></th>
                     </tr>
                 </thead>
+                <tbody>
+                    {objData.map(tax => (
+                        tax.real_state == rs_id &&
+                        <tr key={tax.id}>
+                            <td>{tax.tax}</td>
+                            <td>{tax.tax_nbr1}{rs_id}</td>
+                            <td>{tax.tax_nbr2}</td>
+                            <td>{tax.taxed_person}</td>
+                            <td>{tax.observations}</td>
+                            <td style={{ width: "10px" }}>
+                                <button className="btn btn-sm btn-danger" type="button" onClick={() => handleDelete(tax.id)}><i className="bi bi-trash3"></i></button>
+                            </td>
+                            <td style={{ width: "10px" }}>
+                                <button className="btn btn-sm btn-success" type="button" onClick={() => handleEdit(tax)}><i className="bi bi-pencil-square"></i></button>
+                            </td>
+                            </tr>
+                    ))}
+                </tbody>
             </table>
         </>
     )
@@ -123,7 +151,7 @@ function RealState() {
                     </div>
                     <div className="ms-5" style={{ width: "60%", minHeight: "300px" }}>
                         <ObjProvider obj="impuesto">
-                            <Taxes />
+                            {objData && <Taxes rs_id={objData.id} />}
                         </ObjProvider>
                     </div>
                 </div>
