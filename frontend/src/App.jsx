@@ -32,6 +32,11 @@ function App() {
             <Crud />
           </ObjProvider>
         } />
+        <Route path="/tipo_de_impuesto" element={
+          <ObjProvider obj="tipo_de_impuesto" depth="0">
+            <Crud />
+          </ObjProvider>
+        } />
         <Route path="/propiedad/:rs_id" element={
           <RsProvider >
               <RealState />

@@ -61,7 +61,12 @@ function RsTable({objData}) {
 
 
 function Taxes({rs_id}) {
-    const { obj, objData, openModal, showModal, handleDelete, setEditObj} = useObjContext();
+    
+    /*
+        TODO: reestructurar para usar tb en ABM de parámetros todo lo respectivo a Taxes
+    */
+    
+    const { obj, objData, openModal, showModal, handleDelete, setEditObj } = useObjContext();
     const obj_name_title = String(obj[0]).toUpperCase() + String(obj).slice(1)
     const newModalTitle = `Agregar ${obj_name_title.replaceAll('_', ' ')}`
 
@@ -119,20 +124,23 @@ function RealState() {
     
     return (
         <>
-            <h1>{objData.rs_name}</h1>
-            <div className="w-100 mt-5">
-                <div className="hstack w-100">
-                    <div style={{ width: "40%", minHeight: "300px" }}>
-                        <h4 className="text-start">DATOS</h4>
-                        {objData && <RsTable objData={objData} />}
-                    </div>
-                    <div className="ms-5" style={{ width: "60%", minHeight: "300px" }}>
-                        <ObjProvider obj="impuesto" depth="1">
-                            {objData && <Taxes rs_id={objData.id} />}
-                        </ObjProvider>
+            {objData &&
+            <div>
+                <h1>{objData.rs_name}</h1>
+                <div className="w-100 mt-5">
+                    <div className="hstack w-100">
+                        <div style={{ width: "40%", minHeight: "300px" }}>
+                            <h4 className="text-start">DATOS</h4>
+                            <RsTable objData={objData} />
+                        </div>
+                        <div className="ms-5" style={{ width: "60%", minHeight: "300px" }}>
+                            <ObjProvider obj="impuesto" depth="1">
+                                <Taxes rs_id={objData.id} />
+                            </ObjProvider>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </div>}
         </>
     )
 }

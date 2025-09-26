@@ -241,4 +241,17 @@ function FormTax({ rs_id, formRef, initialData }) {
 }
 
 
-export { FormOwner, FormRsType, FormRealState, FormTax};
+function FormTaxType({ formRef, initialData }) {
+    const { register, onSubmit } = useFormHandler(initialData);
+
+    return (
+        <form ref={formRef} onSubmit={onSubmit}>
+            <div className="w-100">
+                <label htmlFor='tax_type'>TIPO DE IMPUESTO</label>
+                <input className='form-control form-control-sm' id='tax_type' name='tax_type' {...register('tax_type')} required/>
+            </div>
+        </form>
+    )
+}
+
+export { FormOwner, FormRsType, FormRealState, FormTax, FormTaxType};

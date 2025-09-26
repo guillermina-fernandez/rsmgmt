@@ -22,6 +22,11 @@ const modelConfig = {
         searchBy: ["rs_name", "owners", "usufructs"],
         sortBy: ["rs_name"],
     },
+    tipo_de_impuesto: {
+        columns: ["COD", 'TIPO DE IMPUESTO'],
+        searchBy: ["tax_type"],
+        sortBy: ["tax_type"]
+    },
     impuesto: {
         columns: ["IMPUESTO", 'NRO', 'NRO SEC', 'TITULAR', 'OBS'],
         searchBy: [''],
