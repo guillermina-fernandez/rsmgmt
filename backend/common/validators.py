@@ -41,6 +41,8 @@ class UniqueTogetherWithNullAsEmpty:
     def normalize(self, value):
         if value is None:
             return ''
+        if isinstance(value, dict):
+            return str(value.id)
         if isinstance(value, (int, float)):
             return str(value)
         return str(value).strip()
@@ -64,10 +66,25 @@ class UniqueTogetherWithNullAsEmpty:
             compare[f] = self.normalize(raw)
 
         # build a Q that treats '' and NULL as equivalent
-        q = Q()
+        """q = Q()
         for f, val in compare.items():
+            print('value: ', val)
             if val == '':
                 q &= (Q(**{f"{f}__isnull": True}) | Q(**{f: ''}))
+            else:
+                q &= Q(**{f: val})"""
+
+        q = Q()
+        for f, val in compare.items():
+            field_object = self.queryset.model._meta.get_field(f)
+
+            if val == '':
+                if isinstance(field_object, (models.IntegerField, models.ForeignKey, models.OneToOneField)):
+                    # For numeric/FK fields, only check for null
+                    q &= Q(**{f"{f}__isnull": True})
+                else:
+                    # For Char/Text fields, treat '' and null as equivalent
+                    q &= (Q(**{f"{f}__isnull": True}) | Q(**{f: ''}))
             else:
                 q &= Q(**{f: val})
 
@@ -110,6 +127,8 @@ def normalize_form_data(model_obj, form_data):
             continue
 
         value = form_data[name]
+        if isinstance(value, dict):
+            value = value['id']
 
         if isinstance(field, (models.CharField, models.TextField)) and isinstance(value, str):
             normalized[name] = value.strip().upper()

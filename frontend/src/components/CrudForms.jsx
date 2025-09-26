@@ -61,7 +61,7 @@ function FormRealState({ formRef }) {
     useEffect(() => {
         const loadTypes = async () => {
             try {
-                const fetchedData = await fetchObjsData('tipo_de_propiedad');
+                const fetchedData = await fetchObjsData('tipo_de_propiedad', "0");
                 const flatData = Array.isArray(fetchedData) ? fetchedData.flat() : [];
                 setRsTypes(flatData)
             } catch (err) {
@@ -74,7 +74,7 @@ function FormRealState({ formRef }) {
 
         const loadOwners = async () => {
             try {
-                const fetchedData = await fetchObjsData('propietario');
+                const fetchedData = await fetchObjsData('propietario', "0");
                 const flatData = Array.isArray(fetchedData) ? fetchedData.flat() : [];
                 setOwnersData(flatData)
             } catch (err) {
@@ -154,18 +154,69 @@ function FormRealState({ formRef }) {
 
 
 function FormTax({ rs_id, formRef, initialData }) {
-    const { register, onSubmit } = useFormHandler(initialData);
+    const [taxTypes, setTaxTypes] = useState()
+    const [hide, setHide] = useState(true)
+    const { setError, setLoading } = useObjContext()
+    const { register, onSubmit, setValue } = useFormHandler(initialData);
     
+    useEffect(() => {
+        const loadTypes = async () => {
+            try {
+                const fetchedData = await fetchObjsData('tipo_de_impuesto', "0");
+                const flatData = Array.isArray(fetchedData) ? fetchedData.flat() : [];
+                setTaxTypes(flatData)
+            } catch (err) {
+                setError(err);
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadTypes();
+
+        return () => { }
+    }, [])
+    
+    useEffect(() => {
+        hide && setValue('tax_other', '');
+    }, [hide, setValue]);
+
+    useEffect(() => {
+        if (!taxTypes || taxTypes.length === 0) return;
+        
+        if (initialData?.tax_type) {
+            setValue('tax_type', initialData.tax_type.id);
+            setValue('tax_other', initialData.tax_other);
+            handleChange(initialData.tax_type.id);
+        } else {
+            setValue('tax_type', '')
+        }
+    }, [taxTypes]);
+
+    const handleChange = (optValue) => {
+        [1, "1"].includes(optValue) ? setHide(false) : setHide(true)
+    }
+
     return (
         <form ref={formRef} onSubmit={onSubmit}>
             <div>
                 {!initialData?.real_state &&
-                    <input type="number" id="real_state" name="real_state" value={rs_id} {...register('real_state')} hidden readOnly/>
+                    <input type="number" id="real_state" name="real_state" value={parseInt(rs_id)} {...register('real_state')} hidden readOnly/>
                 }
             </div>
             <div className="w-100">
-                <label htmlFor='tax'>TIPO</label>
-                <input className="form-control form-control-sm" id="tax" name="tax" placeholder='Nombre/Entidad...' {...register('tax')} required />
+                <label htmlFor='tax_type'>TIPO</label>
+                <select className='form-select form-select-sm' id='tax_type' name='tax_type' {...register("tax_type", {onChange: (e) => handleChange(e.target.value)})} required>
+                    <option value="" disabled></option>
+                    {taxTypes && taxTypes.map(item => (
+                        <option key={item.id} value={item.id}>{item.tax_type}</option>
+                    ))}
+                </select>
+            </div>
+            <div className="w-100" hidden={hide}>
+                <label htmlFor='tax_other'>NOMBRE</label>
+                <input className="form-control form-control-sm" id="tax_other" name="tax_other" placeholder='Nombre/Entidad...' {...register('tax_other')} required={!hide} />
             </div>
             <div className='hstack mt-3'>
                 <div className='w-100'>

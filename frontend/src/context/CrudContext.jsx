@@ -21,6 +21,11 @@ const modelConfig = {
         columns: ["COD", "PROPIEDAD", "TIPO", "COCHERA", "PROPIETARIO/S", "USUFRUCTO", "OBS"],
         searchBy: ["rs_name", "owners", "usufructs"],
         sortBy: ["rs_name"],
+    },
+    impuesto: {
+        columns: ["IMPUESTO", 'NRO', 'NRO SEC', 'TITULAR', 'OBS'],
+        searchBy: [''],
+        sortBy: ['tax_type', 'tax_other', 'tax_nbr1', 'tax_nbr2']
     }
 }
 
@@ -28,7 +33,7 @@ const ObjContext = createContext();
 
 export const useObjContext = () => useContext(ObjContext);
 
-export const ObjProvider = ({ obj, children }) => {
+export const ObjProvider = ({ obj, depth, children }) => {
     const [objData, setObjData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -42,7 +47,7 @@ export const ObjProvider = ({ obj, children }) => {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const fetchedData = await fetchObjsData(obj);
+                const fetchedData = await fetchObjsData(obj, depth);
                 const flatData = Array.isArray(fetchedData) ? fetchedData.flat() : [];
                 setObjData(flatData);
             } catch (err) {
@@ -172,7 +177,7 @@ export const ObjProvider = ({ obj, children }) => {
         setObjData(prev => {
             const updated = prev.map(item =>
                 item.id === newData.id ? newData : item
-            );
+            ); 
             return sortData(updated);
         });
     }

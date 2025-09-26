@@ -1,6 +1,6 @@
 // Fetch all objects
-export const fetchObjsData = async (obj) => {
-    const response = await fetch(`http://127.0.0.1:8000/api/${obj}/`);
+export const fetchObjsData = async (obj, depth) => {
+    const response = await fetch(`http://127.0.0.1:8000/api/${obj}/${depth}/`);
 
     if (!response.ok) {
         let message = `Error ${response.status}`;
@@ -19,8 +19,7 @@ export const fetchObjsData = async (obj) => {
 
 // Fetch one object
 export const fetchObjData = async (obj, obj_id) => {
-    const response = await fetch(`http://127.0.0.1:8000/api/${obj}/${obj_id}/`);
-
+    const response = await fetch(`http://127.0.0.1:8000/api/${obj}/cod/${obj_id}/`);
     if (!response.ok) {
         let message = `Error ${response.status}`;
         try {

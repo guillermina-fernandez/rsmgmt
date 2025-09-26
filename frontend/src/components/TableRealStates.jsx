@@ -29,9 +29,13 @@ function TableRealStates() {
                 <tbody>
                     {showData.map((dataItem) =>
                         <tr key={dataItem.id} className="text-start">
-                            {Object.keys(dataItem).map((key, index) => (
-                                <td key={index} style={{ verticalAlign: "middle" }}>{ dataItem[key] }</td>
-                            ))}
+                            <td>{dataItem.id}</td>
+                            <td>{dataItem.rs_name}</td>
+                            <td>{dataItem.rs_type_name}</td>
+                            <td>{dataItem.has_garage}</td>
+                            <td>{dataItem.owners}</td>
+                            <td>{dataItem.usufructs}</td>
+                            <td>{ dataItem.observations}</td>
                             <td style={{ width: "10px" }}>
                                 <a href={`/propiedad/${dataItem.id}/`}><button className="btn btn-sm btn-success" type="button"><i className="bi bi-pencil-square"></i></button></a>
                             </td>

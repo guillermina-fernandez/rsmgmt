@@ -33,8 +33,19 @@ def get_serializer_class(model_obj, field_names, depth_nbr):
         class Meta:
             model = model_obj
             fields = '__all__' if field_names == '__all__' else tuple(field_names)
-            depth = depth_nbr
+            depth = 0
             validators = meta_validators
+
+        def to_representation(self, instance):
+            rep = super().to_representation(instance)
+            for field in instance._meta.get_fields():
+                if field.is_relation and not field.many_to_many and not field.one_to_many:
+                    value = getattr(instance, field.name)
+                    if value:
+                        rep[field.name] = get_serializer_class(
+                            field.related_model, '__all__', 0
+                        )(value).data
+            return rep
 
     return CustomSerializer
 
@@ -50,10 +61,13 @@ class RealStateCustomSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "rs_name",
+            "rs_type",
             "rs_type_name",
             "has_garage",
             "owners",
             "usufructs",
+            "buy_date",
+            "buy_value",
             "observations",
         ]
 

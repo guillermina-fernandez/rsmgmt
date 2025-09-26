@@ -1,5 +1,6 @@
 from django.db import models
-from parameters.models import RealStateType, Owner
+from django.core.exceptions import ValidationError
+from parameters.models import RealStateType, Owner, TaxType
 
 # Create your models here.
 
@@ -32,13 +33,22 @@ class RealState(models.Model):
 
 class Tax(models.Model):
     real_state = models.ForeignKey(RealState, related_name='tax_rs', on_delete=models.CASCADE)
-    tax = models.CharField(max_length=50)
+    tax_type = models.ForeignKey(TaxType, related_name='tax_tax_type', on_delete=models.RESTRICT)
+    tax_other = models.CharField(max_length=50, blank=True, null=True)
     tax_nbr1 = models.CharField(max_length=50)
     tax_nbr2 = models.CharField(max_length=50, blank=True, null=True)
     taxed_person = models.CharField(max_length=60, blank=True, null=True)
     observations = models.CharField(max_length=500, blank=True, null=True)
 
+    def clean(self):
+        if self.tax_type.tax_type == 'OTRO' and not self.tax_other:
+            raise ValidationError('Detalle un nombre para el impuesto.')
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
     class Meta:
-        unique_together = ('tax_nbr1', 'tax_nbr2', )
-        ordering = ('tax', 'tax_nbr1', 'tax_nbr2', )
+        unique_together = ('tax_type', 'tax_nbr1', 'tax_nbr2', )
+        ordering = ('tax_type', 'tax_other', 'tax_nbr1', 'tax_nbr2', )
 

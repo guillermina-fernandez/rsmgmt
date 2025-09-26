@@ -13,22 +13,22 @@ function App() {
       <NavBar/>
       <Routes>
         <Route path="/propietario" element={
-          <ObjProvider obj="propietario">
+          <ObjProvider obj="propietario" depth="0">
             <Crud />
           </ObjProvider>
         } />
         <Route path="/inquilino" element={
-          <ObjProvider obj="inquilino">
+          <ObjProvider obj="inquilino" depth="0">
             <Crud />
           </ObjProvider>
         } />
         <Route path="/tipo_de_propiedad" element={
-          <ObjProvider obj="tipo_de_propiedad">
+          <ObjProvider obj="tipo_de_propiedad" depth="0">
             <Crud />
           </ObjProvider>
         } />
         <Route path="/propiedad" element={
-          <ObjProvider obj="propiedad">
+          <ObjProvider obj="propiedad" depth="0">
             <Crud />
           </ObjProvider>
         } />

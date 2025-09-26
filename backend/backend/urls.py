@@ -23,6 +23,6 @@ urlpatterns = [
     path('api/create/<str:model_name>/', create_object),
     path('api/update/<str:model_name>/<str:obj_id>/', update_object),
     path('api/delete/<str:model_name>/<str:obj_id>/', delete_object),
-    path('api/<str:model_name>/', fetch_objects),
-    path('api/<str:model_name>/<str:obj_id>/', fetch_object),
+    path('api/<str:model_name>/<str:depth>/', fetch_objects),
+    path('api/<str:model_name>/cod/<str:obj_id>/', fetch_object),
 ]

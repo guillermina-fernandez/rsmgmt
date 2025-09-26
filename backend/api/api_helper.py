@@ -4,32 +4,37 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from django.core.exceptions import ValidationError
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.db.models import ProtectedError, RestrictedError
 
 from common.validators import normalize_form_data
 
 from .serializers import get_serializer_class, RealStateCustomSerializer
 
-from parameters.models import Owner, Tenant, RealStateType
+from parameters.models import Owner, Tenant, RealStateType, TaxType
 from realstate.models import RealState, Tax
 
 models_dic = {
     'propietario': Owner,
     'inquilino': Tenant,
     'tipo_de_propiedad': RealStateType,
+    'tipo_de_impuesto': TaxType,
     'propiedad': RealState,
     'impuesto': Tax
 }
 
+default_depth = {
+    'impuesto': 1,
+}
+
 
 @api_view(('GET', ))
-def fetch_objects(request, model_name):
+def fetch_objects(request, model_name, depth):
     if model_name == 'propiedad':
         serializer = RealStateCustomSerializer(RealState.objects.all(), many=True)
     else:
         serializer_class = get_serializer_class(
-            models_dic[model_name], '__all__', 0
+            models_dic[model_name], '__all__', int(depth)
         )
         serializer = serializer_class(models_dic[model_name].objects.all(), many=True)
 
@@ -43,13 +48,15 @@ def fetch_object(request, model_name, obj_id):
     if not obj_id:
         return Response({'error': 'No se ha determinado un id.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    serializer_class = get_serializer_class(
-        models_dic[model_name], '__all__', 1
-    )
-
     try:
         obj = models_dic[model_name].objects.get(id=int(obj_id))
-        serializer = serializer_class(instance=obj)
+        if model_name == 'propiedad':
+            serializer = RealStateCustomSerializer(instance=obj)
+        else:
+            serializer_class = get_serializer_class(
+                models_dic[model_name], '__all__', 1
+            )
+            serializer = serializer_class(instance=obj)
         return Response({'data': serializer.data}, status=status.HTTP_200_OK)
     except ValidationError as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -60,9 +67,8 @@ def fetch_object(request, model_name, obj_id):
 
 
 @api_view(('POST', ))
-def create_object(request, model_name):
+def create_object(request, model_name): #VOY A TENER Q PASAR LA DEPTH PARA QUE ME LLEVE TODA LA DATA
     form_data = request.data
-
     if not form_data:
         return Response({'error': 'No se ha enviado la información.'}, status=status.HTTP_400_BAD_REQUEST)
     if not model_name:
@@ -71,14 +77,25 @@ def create_object(request, model_name):
     form_data = normalize_form_data(models_dic[model_name], form_data)
 
     serializer_class = get_serializer_class(models_dic[model_name], '__all__', 0)
+
     serializer = serializer_class(data=form_data)
+
     if serializer.is_valid():
         try:
             instance = serializer.save()
             if model_name == 'propiedad':
                 serializer = RealStateCustomSerializer(instance=instance)
+            else:
+                if model_name in default_depth.keys():
+                    depth = default_depth[model_name]
+                else:
+                    depth = 0
+                serializer_class = get_serializer_class(models_dic[model_name], '__all__', depth)
+                serializer = serializer_class(instance=instance)
             return Response({'data': serializer.data}, status=status.HTTP_200_OK)
         except ValidationError as e:
+            return Response({'error': {'__all__': [str(e)]}}, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError as e:
             return Response({'error': {'__all__': [str(e)]}}, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -97,9 +114,16 @@ def update_object(request, model_name, obj_id):
         return Response({'error': 'No se ha determinado un id.'}, status=status.HTTP_400_BAD_REQUEST)
 
     form_data = normalize_form_data(models_dic[model_name], form_data)
-    serializer_class = get_serializer_class(models_dic[model_name], '__all__', 0)
+
+    if model_name in default_depth.keys():
+        depth = default_depth[model_name]
+    else:
+        depth = 0
+    serializer_class = get_serializer_class(models_dic[model_name], '__all__', depth)
+
     try:
         object_instance = models_dic[model_name].objects.get(id=int(obj_id))
+
     except ValidationError as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except models_dic[model_name].DoesNotExist:

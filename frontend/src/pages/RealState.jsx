@@ -17,23 +17,15 @@ function get_name(address, floor, unit) {
 }
 
 
-function get_persons(personsArray) {
-    let persons = ''
-    personsArray.forEach(person => {
-        if (persons) {
-            persons += '\n';
-        }
-        const person_info = `${person.last_name} ${person.first_name} (${person.cuit}), `;
-        persons += person_info
-    })
-
-    persons = persons.substring(0, persons.length - 2)
+function get_persons(personsString) {
+    let persons = personsString.replace(/, /g, ",\n");
+    
     return persons
 }
 
 
 function RsTable({objData}) {
-    let rs_type = objData.rs_type.rs_type;
+    let rs_type = objData.rs_type_name;
     const has_garage = objData.has_garage;
     if (has_garage === 'SI') {
         rs_type += " CON COCHERA"
@@ -44,8 +36,8 @@ function RsTable({objData}) {
         buy_date = spanishDate(buy_date)
     }
 
-    const owners = get_persons(objData.owner)
-    const usufructuaries = get_persons(objData.usufruct)
+    const owners = get_persons(objData.owners)
+    const usufructs = get_persons(objData.usufructs)
 
     return (
         <table className="custom-fix-table border">
@@ -60,7 +52,7 @@ function RsTable({objData}) {
                 </tr>
                 <tr>
                     <th>Usufructo:</th>
-                    <td style={{ whiteSpace: 'pre-line' }}>{usufructuaries}</td>
+                    <td style={{ whiteSpace: 'pre-line' }}>{usufructs}</td>
                 </tr>
                 <tr>
                     <th>Fecha Compra:</th>
@@ -102,7 +94,7 @@ function Taxes({rs_id}) {
             <table className="custom-table border">
                 <thead>
                     <tr>
-                        <th>NOMBRE</th>
+                        <th>IMPUESTO</th>
                         <th>NRO</th>
                         <th>NRO SEC</th>
                         <th>TITULAR</th>
@@ -112,10 +104,9 @@ function Taxes({rs_id}) {
                     </tr>
                 </thead>
                 <tbody>
-                    {objData.map(tax => (
-                        tax.real_state == rs_id &&
+                    {objData.filter(tax => tax.real_state.id === rs_id).map(tax => (
                         <tr key={tax.id}>
-                            <td>{tax.tax}</td>
+                            <td>{tax.tax_type.tax_type === 'OTRO' ? tax.tax_other : tax.tax_type.tax_type}</td>
                             <td>{tax.tax_nbr1}</td>
                             <td>{tax.tax_nbr2}</td>
                             <td>{tax.taxed_person}</td>
@@ -126,7 +117,7 @@ function Taxes({rs_id}) {
                             <td style={{ width: "10px" }}>
                                 <button className="btn btn-sm btn-success" type="button" onClick={() => handleEdit(tax)}><i className="bi bi-pencil-square"></i></button>
                             </td>
-                            </tr>
+                        </tr>
                     ))}
                 </tbody>
             </table>
@@ -150,7 +141,7 @@ function RealState() {
                         {objData && <RsTable objData={objData} />}
                     </div>
                     <div className="ms-5" style={{ width: "60%", minHeight: "300px" }}>
-                        <ObjProvider obj="impuesto">
+                        <ObjProvider obj="impuesto" depth="1">
                             {objData && <Taxes rs_id={objData.id} />}
                         </ObjProvider>
                     </div>

@@ -34,3 +34,21 @@ class RealStateType(models.Model):
     class Meta:
         ordering = ('rs_type', )
 
+
+class TaxType(models.Model):
+    tax_type = models.CharField(max_length=20, unique=True)
+
+    class Meta:
+        ordering = ('tax_type', )
+
+    def save(self, *args, **kwargs):
+        if self.pk is not None:
+            original = TaxType.objects.get(pk=self.pk)
+            if original.tax_type == 'OTRO':
+                raise ValueError("Este registro no puede ser modificado.")
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        if self.tax_type == 'OTRO':
+            raise ValueError("Este registro no puede ser eliminado")
+        super().delete(*args, **kwargs)
