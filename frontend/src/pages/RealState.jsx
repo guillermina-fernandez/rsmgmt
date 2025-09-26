@@ -5,18 +5,6 @@ import { useObjContext } from "../context/CrudContext";
 import { ObjProvider } from "../context/CrudContext";
 
 
-function get_name(address, floor, unit) {
-    let rs_name = address || ""
-    if (floor) {
-        rs_name += ` - Piso: ${floor}`
-    }
-    if (unit) {
-        rs_name += ` - Unidad: ${unit}`
-    }
-    return rs_name
-}
-
-
 function get_persons(personsString) {
     let persons = personsString.replace(/, /g, ",\n");
     
@@ -128,12 +116,10 @@ function Taxes({rs_id}) {
 
 function RealState() {
     const { objData } = useRsContext();
-
-    const rs_name = objData ? get_name(objData.address, objData.floor, objData.unit) : "";
     
     return (
         <>
-            <h1>{rs_name}</h1>
+            <h1>{objData.rs_name}</h1>
             <div className="w-100 mt-5">
                 <div className="hstack w-100">
                     <div style={{ width: "40%", minHeight: "300px" }}>
