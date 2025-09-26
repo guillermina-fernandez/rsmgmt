@@ -155,11 +155,13 @@ function FormRealState({ formRef }) {
 
 function FormTax({ rs_id, formRef, initialData }) {
     const { register, onSubmit } = useFormHandler(initialData);
-
+    
     return (
         <form ref={formRef} onSubmit={onSubmit}>
             <div>
-                <input type="number" id="real_state" name="real_state" value={rs_id} {...register('real_state')} hidden readOnly/>
+                {!initialData?.real_state &&
+                    <input type="number" id="real_state" name="real_state" value={rs_id} {...register('real_state')} hidden readOnly/>
+                }
             </div>
             <div className="w-100">
                 <label htmlFor='tax'>TIPO</label>

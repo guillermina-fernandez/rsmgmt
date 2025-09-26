@@ -1,6 +1,8 @@
 import re
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
+
 
 
 def validate_cuit(value):
@@ -39,29 +41,42 @@ class UniqueTogetherWithNullAsEmpty:
     def normalize(self, value):
         if value is None:
             return ''
-        if isinstance(value, str) and value.strip() == '':
-            return ''
-        return value
+        if isinstance(value, (int, float)):
+            return str(value)
+        return str(value).strip()
 
     def __call__(self, attrs, serializer=None):
-        instance = getattr(serializer, "instance", None)
-        instance_pk = getattr(instance, "pk", None)
+        # safely get underlying instance (handles wrapped serializers)
+        instance_obj = getattr(serializer, 'instance', None) if serializer else None
+        if instance_obj and hasattr(instance_obj, 'instance'):
+            instance_obj = instance_obj.instance
+        instance_pk = getattr(instance_obj, instance_obj._meta.pk.name, None) if instance_obj else None
 
-        compare = {f: self.normalize(attrs.get(f, None)) for f in self.fields}
+        # build compare dict: prefer incoming attrs, fallback to instance values
+        compare = {}
+        for f in self.fields:
+            if serializer and isinstance(attrs, dict) and f in attrs:
+                raw = attrs.get(f)
+            elif instance_obj is not None:
+                raw = getattr(instance_obj, f, None)
+            else:
+                raw = None
+            compare[f] = self.normalize(raw)
 
-        qs = self.queryset
-        if instance_pk:
+        # build a Q that treats '' and NULL as equivalent
+        q = Q()
+        for f, val in compare.items():
+            if val == '':
+                q &= (Q(**{f"{f}__isnull": True}) | Q(**{f: ''}))
+            else:
+                q &= Q(**{f: val})
+
+        qs = self.queryset.filter(q)
+        if instance_pk is not None:
             qs = qs.exclude(pk=instance_pk)
 
-        for obj in qs:
-            match = True
-            for f in self.fields:
-                obj_val = self.normalize(getattr(obj, f))
-                if obj_val != compare[f]:
-                    match = False
-                    break
-            if match:
-                raise ValidationError(self.message)
+        if qs.exists():
+            raise ValidationError(self.message)
 
 
 def normalize_form_data(model_obj, form_data):

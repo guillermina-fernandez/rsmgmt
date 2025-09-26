@@ -19,7 +19,7 @@ models_dic = {
     'inquilino': Tenant,
     'tipo_de_propiedad': RealStateType,
     'propiedad': RealState,
-    'impuesto': Tax,
+    'impuesto': Tax
 }
 
 
@@ -62,6 +62,7 @@ def fetch_object(request, model_name, obj_id):
 @api_view(('POST', ))
 def create_object(request, model_name):
     form_data = request.data
+
     if not form_data:
         return Response({'error': 'No se ha enviado la información.'}, status=status.HTTP_400_BAD_REQUEST)
     if not model_name:

@@ -116,7 +116,7 @@ function Taxes({rs_id}) {
                         tax.real_state == rs_id &&
                         <tr key={tax.id}>
                             <td>{tax.tax}</td>
-                            <td>{tax.tax_nbr1}{rs_id}</td>
+                            <td>{tax.tax_nbr1}</td>
                             <td>{tax.tax_nbr2}</td>
                             <td>{tax.taxed_person}</td>
                             <td>{tax.observations}</td>
