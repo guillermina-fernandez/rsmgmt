@@ -138,8 +138,11 @@ def update_object(request, model_name, obj_id):
             return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 @api_view(['DELETE'])
@@ -152,7 +155,6 @@ def delete_object(request, model_name, obj_id):
     try:
         with transaction.atomic():
             obj = models_dic[model_name].objects.get(id=int(obj_id))
-            print('obj', obj)
             obj.delete()
             return Response({'success': True}, status=status.HTTP_200_OK)
     except ValidationError as e:
@@ -165,6 +167,8 @@ def delete_object(request, model_name, obj_id):
         return Response({'error': f'No se puede eliminar debido a restricción de integridad: {list(e.restricted_objects)}'}, status=status.HTTP_400_BAD_REQUEST)
     except LookupError:
         return Response({'error': f'Nombre de modelo inválido ({model_name}).'}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

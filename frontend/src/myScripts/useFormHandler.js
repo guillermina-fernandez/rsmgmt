@@ -11,7 +11,6 @@ export const useFormHandler = (initialData) => {
     }, [initialData, reset]);
 
     const onSubmit = handleSubmit((data) => {
-        console.log(data)
         if (initialData?.id) {
             submitForm({ ...initialData, ...data }, 'update');
         } else {

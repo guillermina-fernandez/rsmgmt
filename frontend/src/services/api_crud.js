@@ -69,11 +69,13 @@ export const updateObjDataAPI = async (obj, id, data) => {
         body: JSON.stringify(data),
     });
 
+    const responseBody = await response.text();
     let result;
+
     try {
-        result = await response.json();
+        result = JSON.parse(responseBody);
     } catch {
-        result = await response.text();
+        result = responseBody;
     }
 
     if (!response.ok) {
