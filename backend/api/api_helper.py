@@ -42,6 +42,18 @@ def fetch_objects(request, model_name, depth):
 
 
 @api_view(('GET', ))
+def fetch_related(request, related_model, related_depth, related_field, related_id):
+    serializer_class = get_serializer_class(
+        models_dic[related_model], '__all__', int(related_depth)
+    )
+    filter_kwargs = {f"{related_field}_id": int(related_id)}
+    query_set = models_dic[related_model].objects.filter(**filter_kwargs)
+    serializer = serializer_class(query_set, many=True)
+
+    return Response([serializer.data])
+
+
+@api_view(('GET', ))
 def fetch_object(request, model_name, obj_id):
     if not model_name:
         return Response({'error': 'No se ha determinado un modelo.'}, status=status.HTTP_400_BAD_REQUEST)

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {validateCuit} from '../myScripts/myMainScript';
 import { useFormHandler } from '../myScripts/useFormHandler';
 import { fetchObjsData } from '../services/api_crud';
-import { useObjContext } from '../context/CrudContext';
+import { useDataContext } from '../context/DataContext';
 import TableChecks from './TableChecks';
 
 function FormOwner({ formRef, initialData }) {
@@ -46,7 +46,7 @@ function FormRsType({ formRef, initialData }) {
 
 function FormRealState({ formRef }) {
     const { register, onSubmit, setValue} = useFormHandler(null);
-    const { setError, setLoading } = useObjContext()
+    const { setError, setLoading } = useDataContext();
     
     const [rsTypes, setRsTypes] = useState(null);
     const [ownersData, setOwnersData] = useState(null);
@@ -156,7 +156,7 @@ function FormRealState({ formRef }) {
 function FormTax({ rs_id, formRef, initialData }) {
     const [taxTypes, setTaxTypes] = useState()
     const [hide, setHide] = useState(true)
-    const { setError, setLoading } = useObjContext()
+    const { setError, setLoading } = useDataContext();
     const { register, onSubmit, setValue } = useFormHandler(initialData);
     
     useEffect(() => {

@@ -1,11 +1,10 @@
 
-import { useObjContext } from "../context/CrudContext";
+import { useDataContext } from "../context/DataContext";
 
 function TableRealStates() {
+    const { modelData, foundObjs } = useDataContext();
 
-    const { objData, foundObjs } = useObjContext();
-
-    let showData = objData;
+    let showData = modelData;
     if (foundObjs) {
         showData = foundObjs;
     }

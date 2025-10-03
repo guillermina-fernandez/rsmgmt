@@ -1,8 +1,8 @@
 import { useRsContext } from "../context/RsContext";
 import { spanishDate } from "../myScripts/myMainScript";
 import Modal from "../components/Modal";
-import { useObjContext } from "../context/CrudContext";
-import { ObjProvider } from "../context/CrudContext";
+import { useDataContext } from "../context/DataContext";
+import { DataProvider } from "../context/DataContext";
 
 
 function get_persons(personsString) {
@@ -60,18 +60,15 @@ function RsTable({objData}) {
 }
 
 
-function Taxes({rs_id}) {
-    
-    /*
-        TODO: reestructurar para usar tb en ABM de parámetros todo lo respectivo a Taxes
-    */
-    
-    const { obj, objData, openModal, showModal, handleDelete, setEditObj } = useObjContext();
-    const obj_name_title = String(obj[0]).toUpperCase() + String(obj).slice(1)
+function Taxes() {    
+    const { modelName, modelId, modelData, openModal, showModal, handleDelete, setEditObj, modelConfig } = useDataContext();
+    const obj_name_title = String(modelName[0]).toUpperCase() + String(modelName).slice(1);
     const newModalTitle = `Agregar ${obj_name_title.replaceAll('_', ' ')}`
 
+    const cols = modelConfig[modelName]['columns'];
+
     const handleEdit = (editObj) => {
-        const objTitle = String(obj[0]).toUpperCase() + String(obj).slice(1)
+        const objTitle = String(modelName[0]).toUpperCase() + String(modelName).slice(1)
         const newModalTitle = `Editar ${objTitle.replaceAll('_', ' ')}`
         openModal(newModalTitle);
         setEditObj(editObj)
@@ -79,7 +76,7 @@ function Taxes({rs_id}) {
 
     return (
         <>
-            {showModal && <Modal rs_id={rs_id} />}
+            {showModal && <Modal rs_id={modelId} />}
             <div className="hstack">
                 <h4>IMPUESTOS</h4>
                 <button type="button" className="btn btn-primary btn-sm ms-3" onClick={() => openModal(newModalTitle)}>+</button>
@@ -87,17 +84,13 @@ function Taxes({rs_id}) {
             <table className="custom-table border">
                 <thead>
                     <tr>
-                        <th>IMPUESTO</th>
-                        <th>NRO</th>
-                        <th>NRO SEC</th>
-                        <th>TITULAR</th>
-                        <th>OBS</th>
+                        {cols.map((col, index) => <th key={`col${index}`} className="text-start">{col}</th>)}
                         <th></th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {objData.filter(tax => tax.real_state.id === rs_id).map(tax => (
+                    {modelData.map(tax => (
                         <tr key={tax.id}>
                             <td>{tax.tax_type.tax_type === 'OTRO' ? tax.tax_other : tax.tax_type.tax_type}</td>
                             <td>{tax.tax_nbr1}</td>
@@ -134,9 +127,9 @@ function RealState() {
                             <RsTable objData={objData} />
                         </div>
                         <div className="ms-5" style={{ width: "60%", minHeight: "300px" }}>
-                            <ObjProvider obj="impuesto" depth="1">
-                                <Taxes rs_id={objData.id} />
-                            </ObjProvider>
+                            <DataProvider modelName='impuesto' modelDepth='0' relatedModel='impuesto' relatedModelDepth='1' relatedFieldName='real_state' modelId={objData.id}>
+                                <Taxes />
+                            </DataProvider>
                         </div>
                     </div>
                 </div>

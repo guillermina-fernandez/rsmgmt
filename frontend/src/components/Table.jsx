@@ -1,17 +1,16 @@
 
-import { useObjContext } from "../context/CrudContext";
+import { useDataContext } from "../context/DataContext";
 
 function Table({ cols }) {
+    const { modelName, modelData, foundObjs, handleDelete, openModal, setEditObj } = useDataContext();
 
-    const { obj, objData, foundObjs, handleDelete, openModal, setEditObj } = useObjContext();
-
-    let showData = objData;
+    let showData = modelData;
     if (foundObjs) {
         showData = foundObjs;
     }
 
     const handleEdit = (editObj) => {
-        const objTitle = String(obj[0]).toUpperCase() + String(obj).slice(1)
+        const objTitle = String(modelName[0]).toUpperCase() + String(modelName).slice(1);
         const newModalTitle = `Editar ${objTitle.replaceAll('_', ' ')}`
         openModal(newModalTitle);
         setEditObj(editObj)

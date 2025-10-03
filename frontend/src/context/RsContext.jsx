@@ -2,9 +2,9 @@ import { createContext, useState, useContext, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { fetchObjData } from "../services/api_crud";
 
-const ObjContext = createContext();
+const DataContext = createContext();
 
-export const useRsContext = () => useContext(ObjContext);
+export const useRsContext = () => useContext(DataContext);
 
 export const RsProvider = ({ children }) => {
     const [objData, setObjData] = useState(null)
@@ -37,7 +37,7 @@ export const RsProvider = ({ children }) => {
         loading
     }
     
-    return <ObjContext.Provider value={value}>
+    return <DataContext.Provider value={value}>
         {children}
-    </ObjContext.Provider>;
+    </DataContext.Provider>;
 }

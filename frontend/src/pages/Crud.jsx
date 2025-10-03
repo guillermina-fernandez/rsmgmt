@@ -2,16 +2,16 @@ import SearchBar from "../components/SearchBar";
 import Table from "../components/Table";
 import TableRealStates from "../components/TableRealStates";
 import Modal from "../components/Modal";
-import { useObjContext } from "../context/CrudContext";
+import { useDataContext } from "../context/DataContext";
 
 
 function Crud() {
-    const { obj, modelConfig, showModal } = useObjContext();
+    const { modelName, modelConfig, showModal } = useDataContext();
 
     return (
         <div>
             <SearchBar />
-            {obj == 'propiedad' ? <TableRealStates /> : <Table cols={modelConfig[obj]["columns"]} />}
+            {modelName == 'propiedad' ? <TableRealStates /> : <Table cols={modelConfig[modelName]["columns"]} />}
             {showModal && <Modal />}
         </div>
     )

@@ -1,9 +1,9 @@
-import { useObjContext } from "../context/CrudContext";
+import { useDataContext } from "../context/DataContext";
 
 function SearchBar() {
-    const { obj, searchObj, handleSearch, openModal } = useObjContext();
-    const obj_name = obj.toUpperCase().replaceAll('_', ' ');
-    const obj_name_title = String(obj[0]).toUpperCase() + String(obj).slice(1)
+    const { modelName, searchObj, handleSearch, openModal } = useDataContext();
+    const obj_name = modelName.toUpperCase().replaceAll('_', ' ');
+    const obj_name_title = String(modelName[0]).toUpperCase() + String(modelName).slice(1);
     const newModalTitle = `Agregar ${obj_name_title.replaceAll('_', ' ')}`
     const placeholder = `Buscar ${obj_name_title.replaceAll('_', ' ')}...`
 

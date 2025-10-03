@@ -1,3 +1,42 @@
+// Fetch all objects from one model
+export const fetchModelObjects = async (modelName, modelDepth) => {
+    const response = await fetch(`http://127.0.0.1:8000/api/${modelName}/${modelDepth}/`);
+
+    if (!response.ok) {
+        let message = `Error ${response.status}`;
+        try {
+            const result = await response.json();
+            message = result.error || JSON.stringify(result);
+        } catch {
+            
+        }
+        throw new Error(message);
+    }
+    
+    return await response.json();
+};
+
+
+// Fetch all objects from a related model
+export const fetchRelatedModelObjects = async (relatedModel, relatedModelDepth, relatedFieldName, modelId) => {
+    const response = await fetch(`http://127.0.0.1:8000/api/related/${relatedModel}/${relatedModelDepth}/${relatedFieldName}/${modelId}/`);
+
+    if (!response.ok) {
+        let message = `Error ${response.status}`;
+        try {
+            const result = await response.json();
+            message = result.error || JSON.stringify(result);
+        } catch {
+            
+        }
+        throw new Error(message);
+    }
+    
+    return await response.json();
+};
+
+
+
 // Fetch all objects
 export const fetchObjsData = async (obj, depth) => {
     const response = await fetch(`http://127.0.0.1:8000/api/${obj}/${depth}/`);
