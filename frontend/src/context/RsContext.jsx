@@ -7,7 +7,7 @@ const DataContext = createContext();
 export const useRsContext = () => useContext(DataContext);
 
 export const RsProvider = ({ children }) => {
-    const [objData, setObjData] = useState(null)
+    const [rsData, setRsData] = useState(null)
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -17,7 +17,7 @@ export const RsProvider = ({ children }) => {
         const loadData = async () => {
             try {
                 const fetchedData = await fetchObjData('propiedad', rs_id);
-                setObjData(fetchedData.data);
+                setRsData(fetchedData.data);
             } catch (err) {
                 setError(err);
                 console.error(err);
@@ -33,7 +33,7 @@ export const RsProvider = ({ children }) => {
     }, []);
 
     const value = {
-        objData,
+        rsData,
         loading
     }
     

@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from parameters.models import RealStateType, Owner, TaxType
+from parameters.models import RealStateType, Owner, TaxType, Tenant
 
 # Create your models here.
 
@@ -52,3 +52,60 @@ class Tax(models.Model):
         unique_together = ('tax_type', 'tax_nbr1', 'tax_nbr2', )
         ordering = ('tax_type', 'tax_other', 'tax_nbr1', 'tax_nbr2', )
 
+
+class Rent(models.Model):
+    real_state = models.ForeignKey(RealState, related_name='rent_rs', on_delete=models.CASCADE)
+    date_from = models.DateField()
+    date_to = models.DateField()
+    actualization = models.CharField(max_length=100)
+    tenant = models.ManyToManyField(Tenant, related_name='rent_tenant')
+    administrator = models.CharField(max_length=100, blank=True, null=True)
+    observations = models.CharField(max_length=500, blank=True, null=True)
+
+    def clean(self):
+        if self.date_from > self.date_to:
+            raise ValidationError("La fecha de Inicio no puede ser posterior a la fecha de Fin")
+        overlapping_rents = Rent.objects.filter(
+            real_state=self.real_state,
+            date_from__lte=self.date_to,
+            date_to__gte=self.date_from,
+        ).exclude(pk=self.pk)
+        if overlapping_rents.exists():
+            raise ValidationError('Ya existe un contrato para las fechas seleccionadas')
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+
+class RentStep(models.Model):
+    rent = models.ForeignKey(Rent, related_name='step_rent', on_delete=models.CASCADE)
+    date_from = models.DateField()
+    date_to = models.DateField()
+    rent_value = models.FloatField(blank=True, null=True)
+    observations = models.CharField(max_length=500)
+
+    def clean(self):
+        if self.date_from > self.date_to:
+            raise ValidationError("La fecha de Inicio no puede ser posterior a la fecha de Fin")
+        overlapping_rents = RentStep.objects.filter(
+            rent=self.rent,
+            date_from__lte=self.date_to,
+            date_to__gte=self.date_from,
+        ).exclude(pk=self.pk)
+        if overlapping_rents.exists():
+            raise ValidationError('Ya existe un Escalón para las fechas seleccionadas')
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+
+
+"""
+Agregar manualmente la restricción de on_delete para MtM fields:
+def delete(self, *args, **kwargs):
+    if self.rent_tenant.exists():
+        raise ValidationError("El Inquilino no se puede eliminar porque tiene un contrato de alquiler vigente.")
+    super().delete(*args, **kwargs)
+"""

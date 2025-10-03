@@ -12,20 +12,20 @@ function get_persons(personsString) {
 }
 
 
-function RsTable({objData}) {
-    let rs_type = objData.rs_type_name;
-    const has_garage = objData.has_garage;
+function RsTable({rsData}) {
+    let rs_type = rsData.rs_type_name;
+    const has_garage = rsData.has_garage;
     if (has_garage === 'SI') {
         rs_type += " CON COCHERA"
     }
 
-    let buy_date = objData.buy_date || null
+    let buy_date = rsData.buy_date || null
     if (buy_date) {
         buy_date = spanishDate(buy_date)
     }
 
-    const owners = get_persons(objData.owners)
-    const usufructs = get_persons(objData.usufructs)
+    const owners = get_persons(rsData.owners)
+    const usufructs = get_persons(rsData.usufructs)
 
     return (
         <table className="custom-fix-table border">
@@ -48,11 +48,11 @@ function RsTable({objData}) {
                 </tr>
                 <tr>
                     <th>Valor Compra:</th>
-                    <td>{objData.buy_value}</td>
+                    <td>{rsData.buy_value}</td>
                 </tr>
                 <tr>
                     <th>Observaciones</th>
-                    <td>{objData.observations}</td>
+                    <td>{rsData.observations}</td>
                 </tr>
             </tbody>
         </table>
@@ -74,6 +74,7 @@ function Taxes() {
         setEditObj(editObj)
     }
 
+    // Cannot use the <Table /> component since real_state and tax_type return objects, not strings...
     return (
         <>
             {showModal && <Modal rs_id={modelId} />}
@@ -113,21 +114,21 @@ function Taxes() {
 
 
 function RealState() {
-    const { objData } = useRsContext();
+    const { rsData } = useRsContext();
     
     return (
         <>
-            {objData &&
+            {rsData &&
             <div>
-                <h1>{objData.rs_name}</h1>
+                <h1>{rsData.rs_name}</h1>
                 <div className="w-100 mt-5">
                     <div className="hstack w-100">
                         <div style={{ width: "40%", minHeight: "300px" }}>
                             <h4 className="text-start">DATOS</h4>
-                            <RsTable objData={objData} />
+                            <RsTable rsData={rsData} />
                         </div>
                         <div className="ms-5" style={{ width: "60%", minHeight: "300px" }}>
-                            <DataProvider modelName='impuesto' modelDepth='0' relatedModel='impuesto' relatedModelDepth='1' relatedFieldName='real_state' modelId={objData.id}>
+                            <DataProvider modelName='impuesto' modelDepth='0' relatedModel='impuesto' relatedModelDepth='1' relatedFieldName='real_state' modelId={rsData.id}>
                                 <Taxes />
                             </DataProvider>
                         </div>
