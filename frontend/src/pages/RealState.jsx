@@ -7,12 +7,12 @@ import { DataProvider } from "../context/DataContext";
 
 function get_persons(personsString) {
     let persons = personsString.replace(/, /g, ",\n");
-    
+
     return persons
 }
 
 
-function RsTable({rsData}) {
+function RsTable({ rsData }) {
     let rs_type = rsData.rs_type_name;
     const has_garage = rsData.has_garage;
     if (has_garage === 'SI') {
@@ -60,7 +60,7 @@ function RsTable({rsData}) {
 }
 
 
-function Taxes() {    
+function Taxes() {
     const { modelName, modelId, modelData, openModal, showModal, handleDelete, setEditObj, modelConfig } = useDataContext();
     const obj_name_title = String(modelName[0]).toUpperCase() + String(modelName).slice(1);
     const newModalTitle = `Agregar ${obj_name_title.replaceAll('_', ' ')}`
@@ -113,28 +113,71 @@ function Taxes() {
 }
 
 
+function Rent() {
+    const { modelName, modelId, modelData, openModal, showModal, handleDelete, setEditObj, modelConfig } = useDataContext();
+    const obj_name_title = String(modelName[0]).toUpperCase() + String(modelName).slice(1);
+    const newModalTitle = `Agregar ${obj_name_title.replaceAll('_', ' ')}`
+
+    const handleEdit = (editObj) => {
+        const objTitle = String(modelName[0]).toUpperCase() + String(modelName).slice(1)
+        const newModalTitle = `Editar ${objTitle.replaceAll('_', ' ')}`
+        openModal(newModalTitle);
+        setEditObj(editObj)
+    }
+
+
+    // Cannot use the <Table /> component since real_state returns and object, not string...
+    return (
+        <>
+            {showModal && <Modal rs_id={modelId} />}
+            <div className="hstack">
+                <h4>ALQUILERES</h4>
+                <button type="button" className="btn btn-primary btn-sm ms-3" onClick={() => openModal(newModalTitle)}>+</button>
+            </div>
+            <table className="custom-table border">
+                <thead>
+                    <tr>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </>
+    )
+}
+
+
 function RealState() {
     const { rsData } = useRsContext();
-    
+
     return (
         <>
             {rsData &&
-            <div>
-                <h1>{rsData.rs_name}</h1>
-                <div className="w-100 mt-5">
-                    <div className="hstack w-100">
-                        <div style={{ width: "40%", minHeight: "300px" }}>
-                            <h4 className="text-start">DATOS</h4>
-                            <RsTable rsData={rsData} />
+                <div>
+                    <h1>{rsData.rs_name}</h1>
+                    <div className="w-100 mt-5">
+                        <div className="hstack w-100">
+                            <div style={{ width: "40%", minHeight: "300px" }}>
+                                <h4 className="text-start">DATOS</h4>
+                                <RsTable rsData={rsData} />
+                            </div>
+                            <div className="ms-5" style={{ width: "60%", minHeight: "300px" }}>
+                                <DataProvider modelName='impuesto' modelDepth='0' relatedModel='impuesto' relatedModelDepth='1' relatedFieldName='real_state' modelId={rsData.id}>
+                                    <Taxes />
+                                </DataProvider>
+                            </div>
                         </div>
-                        <div className="ms-5" style={{ width: "60%", minHeight: "300px" }}>
-                            <DataProvider modelName='impuesto' modelDepth='0' relatedModel='impuesto' relatedModelDepth='1' relatedFieldName='real_state' modelId={rsData.id}>
-                                <Taxes />
-                            </DataProvider>
-                        </div>
+                        <div className="hstack w-100 mt-3">
+                            <div>
+                                <DataProvider modelName='alquiler' modelDepth='0' relatedModel='alquiler' relatedModelDepth='1' relatedFieldName='real_state' modelId={rsData.id}>
+                                    <Rent />
+                                </DataProvider>
+                            </div>
+                        </div> 
                     </div>
-                </div>
-            </div>}
+                </div>}
         </>
     )
 }

@@ -77,6 +77,9 @@ class Rent(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
+    class Meta:
+        ordering = ('-date_to', )
+
 
 class RentStep(models.Model):
     rent = models.ForeignKey(Rent, related_name='step_rent', on_delete=models.CASCADE)

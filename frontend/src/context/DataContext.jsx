@@ -31,6 +31,11 @@ const modelConfig = {
         columns: ["IMPUESTO", 'NRO', 'NRO SEC', 'TITULAR', 'OBS'],
         searchBy: [''],
         sortBy: ['tax_type', 'tax_other', 'tax_nbr1', 'tax_nbr2']
+    },
+    alquiler: {
+        columns: [''],
+        searchBy: [''],
+        sortBy: ['']
     }
 }
 
@@ -68,11 +73,13 @@ export const DataProvider = ({ modelName, modelDepth, modelId, relatedModel, rel
                 setLoading(false);
             }
         };
+        
         loadData();
 
         return () => { }
         
     }, [modelName]);
+
    
     // Alert error (if any)
     useEffect(() => {

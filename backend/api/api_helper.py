@@ -12,7 +12,7 @@ from common.validators import normalize_form_data
 from .serializers import get_serializer_class, RealStateCustomSerializer
 
 from parameters.models import Owner, Tenant, RealStateType, TaxType
-from realstate.models import RealState, Tax
+from realstate.models import RealState, Tax, Rent, RentStep
 
 models_dic = {
     'propietario': Owner,
@@ -20,7 +20,9 @@ models_dic = {
     'tipo_de_propiedad': RealStateType,
     'tipo_de_impuesto': TaxType,
     'propiedad': RealState,
-    'impuesto': Tax
+    'impuesto': Tax,
+    'alquiler': Rent,
+    'escalon': RentStep,
 }
 
 default_depth = {
