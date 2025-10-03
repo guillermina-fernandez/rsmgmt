@@ -2,7 +2,7 @@
 import { useDataContext } from "../context/DataContext";
 
 function Table({ cols }) {
-    const { modelName, modelData, foundObjs, handleDelete, openModal, setEditObj } = useDataContext();
+    const { modelData, foundObjs, handleDelete, openModal, setEditObj } = useDataContext();
 
     let showData = modelData;
     if (foundObjs) {
@@ -10,9 +10,7 @@ function Table({ cols }) {
     }
 
     const handleEdit = (editObj) => {
-        const objTitle = String(modelName[0]).toUpperCase() + String(modelName).slice(1);
-        const newModalTitle = `Editar ${objTitle.replaceAll('_', ' ')}`
-        openModal(newModalTitle);
+        openModal('edit');
         setEditObj(editObj)
     }
 

@@ -52,6 +52,7 @@ export const DataProvider = ({ modelName, modelDepth, modelId, relatedModel, rel
     const [foundObjs, setFoundObjs] = useState(modelData);
     const [showModal, setShowModal] = useState(false);
     const [modalTitle, setModalTitle] = useState('');
+    const [objName, setObjName] = useState('');
     const [editObj, setEditObj] = useState(null);
 
     // Load initial data on page load
@@ -66,6 +67,13 @@ export const DataProvider = ({ modelName, modelDepth, modelId, relatedModel, rel
                 }
                 const flatData = Array.isArray(fetchedData) ? fetchedData.flat() : [];
                 setModelData(flatData);
+
+                let obj_name = String(modelName[0]).toUpperCase() + String(modelName).slice(1);
+                obj_name = obj_name.replaceAll('_', ' ');
+                const newModalTitle = `Agregar ${obj_name}`;
+                setObjName(obj_name);
+                setModalTitle(newModalTitle);
+
             } catch (err) {
                 setError(err);
                 console.error(err);
@@ -120,9 +128,15 @@ export const DataProvider = ({ modelName, modelDepth, modelId, relatedModel, rel
     }
 
     // Handle modal:
-    const openModal = (newModalTitle) => {
+    const openModal = (action) => {        
+        if (action == 'new') {
+            setModalTitle(`Agregar ${objName}`)    
+        } else if (action == 'edit') {
+            setModalTitle(`Editar ${objName}`)
+        } else {
+            setModalTitle(objName)
+        }
         setShowModal(true);
-        setModalTitle(newModalTitle)
         setEditObj(null);
     };
     
@@ -226,6 +240,7 @@ export const DataProvider = ({ modelName, modelDepth, modelId, relatedModel, rel
         showModal, 
         openModal,
         modalTitle,
+        objName,
         closeModal,
         editObj,
         setEditObj,
