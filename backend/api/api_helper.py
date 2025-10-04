@@ -25,10 +25,6 @@ models_dic = {
     'escalon': RentStep,
 }
 
-default_depth = {
-    'impuesto': 1,
-}
-
 
 @api_view(('GET', ))
 def fetch_objects(request, model_name, depth):
@@ -56,7 +52,7 @@ def fetch_related(request, related_model, related_depth, related_field, related_
 
 
 @api_view(('GET', ))
-def fetch_object(request, model_name, obj_id):
+def fetch_object(request, model_name, obj_id, depth):
     if not model_name:
         return Response({'error': 'No se ha determinado un modelo.'}, status=status.HTTP_400_BAD_REQUEST)
     if not obj_id:
@@ -68,7 +64,7 @@ def fetch_object(request, model_name, obj_id):
             serializer = RealStateCustomSerializer(instance=obj)
         else:
             serializer_class = get_serializer_class(
-                models_dic[model_name], '__all__', 1
+                models_dic[model_name], '__all__', int(depth)
             )
             serializer = serializer_class(instance=obj)
         return Response({'data': serializer.data}, status=status.HTTP_200_OK)
@@ -81,7 +77,7 @@ def fetch_object(request, model_name, obj_id):
 
 
 @api_view(('POST', ))
-def create_object(request, model_name): #VOY A TENER Q PASAR LA DEPTH PARA QUE ME LLEVE TODA LA DATA
+def create_object(request, model_name, depth):
     form_data = request.data
     if not form_data:
         return Response({'error': 'No se ha enviado la información.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -100,10 +96,6 @@ def create_object(request, model_name): #VOY A TENER Q PASAR LA DEPTH PARA QUE M
             if model_name == 'propiedad':
                 serializer = RealStateCustomSerializer(instance=instance)
             else:
-                if model_name in default_depth.keys():
-                    depth = default_depth[model_name]
-                else:
-                    depth = 0
                 serializer_class = get_serializer_class(models_dic[model_name], '__all__', depth)
                 serializer = serializer_class(instance=instance)
             return Response({'data': serializer.data}, status=status.HTTP_200_OK)
@@ -116,7 +108,7 @@ def create_object(request, model_name): #VOY A TENER Q PASAR LA DEPTH PARA QUE M
 
 
 @api_view(['PUT'])
-def update_object(request, model_name, obj_id):
+def update_object(request, model_name, obj_id, depth):
     form_data = request.data
 
     if not form_data:
@@ -129,10 +121,6 @@ def update_object(request, model_name, obj_id):
 
     form_data = normalize_form_data(models_dic[model_name], form_data)
 
-    if model_name in default_depth.keys():
-        depth = default_depth[model_name]
-    else:
-        depth = 0
     serializer_class = get_serializer_class(models_dic[model_name], '__all__', depth)
 
     try:

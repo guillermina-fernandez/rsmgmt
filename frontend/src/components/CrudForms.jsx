@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {validateCuit} from '../myScripts/myMainScript';
 import { useFormHandler } from '../myScripts/useFormHandler';
-import { fetchObjsData } from '../services/api_crud';
+import { fetchModelObjectsAPI } from '../services/api_crud';
 import { useDataContext } from '../context/DataContext';
 import TableChecks from './TableChecks';
 
@@ -61,7 +61,7 @@ function FormRealState({ formRef }) {
     useEffect(() => {
         const loadTypes = async () => {
             try {
-                const fetchedData = await fetchObjsData('tipo_de_propiedad', "0");
+                const fetchedData = await fetchModelObjectsAPI('tipo_de_propiedad', "0");
                 const flatData = Array.isArray(fetchedData) ? fetchedData.flat() : [];
                 setRsTypes(flatData)
             } catch (err) {
@@ -74,7 +74,7 @@ function FormRealState({ formRef }) {
 
         const loadOwners = async () => {
             try {
-                const fetchedData = await fetchObjsData('propietario', "0");
+                const fetchedData = await fetchModelObjectsAPI('propietario', "0");
                 const flatData = Array.isArray(fetchedData) ? fetchedData.flat() : [];
                 setOwnersData(flatData)
             } catch (err) {
@@ -162,7 +162,7 @@ function FormTax({ rs_id, formRef, initialData }) {
     useEffect(() => {
         const loadTypes = async () => {
             try {
-                const fetchedData = await fetchObjsData('tipo_de_impuesto', "0");
+                const fetchedData = await fetchModelObjectsAPI('tipo_de_impuesto', "0");
                 const flatData = Array.isArray(fetchedData) ? fetchedData.flat() : [];
                 setTaxTypes(flatData)
             } catch (err) {

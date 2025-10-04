@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import { fetchModelObjects, fetchRelatedModelObjects, createObjDataAPI, updateObjDataAPI, deleteObjAPI } from "../services/api_crud";
+import { fetchModelObjectsAPI, fetchRelatedModelObjectsAPI, createObjDataAPI, updateObjDataAPI, deleteObjAPI } from "../services/api_crud";
 
 const modelConfig = {
     propietario: {
@@ -61,9 +61,9 @@ export const DataProvider = ({ modelName, modelDepth, modelId, relatedModel, rel
             try {
                 let fetchedData = [];
                 if (relatedModel) {
-                    fetchedData = await fetchRelatedModelObjects(relatedModel, relatedModelDepth, relatedFieldName, modelId)
+                    fetchedData = await fetchRelatedModelObjectsAPI(relatedModel, relatedModelDepth, relatedFieldName, modelId)
                 } else {
-                    fetchedData = await fetchModelObjects(modelName, modelDepth)
+                    fetchedData = await fetchModelObjectsAPI(modelName, modelDepth)
                 }
                 const flatData = Array.isArray(fetchedData) ? fetchedData.flat() : [];
                 setModelData(flatData);
@@ -176,9 +176,9 @@ export const DataProvider = ({ modelName, modelDepth, modelId, relatedModel, rel
         try {
             let responseData;
             if (submitMode === 'create') {
-                responseData = await createObjDataAPI(modelName, submitData);
+                responseData = await createObjDataAPI(modelName, submitData, modelDepth);
             } else {
-                responseData = await updateObjDataAPI(modelName, submitData.id, submitData);
+                responseData = await updateObjDataAPI(modelName, submitData.id, submitData, modelDepth);
             }
 
             const newData = Array.isArray(responseData) ? responseData[0] : responseData;

@@ -1,6 +1,6 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { fetchObjData } from "../services/api_crud";
+import { fetchObjDataAPI } from "../services/api_crud";
 
 const DataContext = createContext();
 
@@ -16,7 +16,7 @@ export const RsProvider = ({ children }) => {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const fetchedData = await fetchObjData('propiedad', rs_id);
+                const fetchedData = await fetchObjDataAPI('propiedad', rs_id, 0);
                 setRsData(fetchedData.data);
             } catch (err) {
                 setError(err);
