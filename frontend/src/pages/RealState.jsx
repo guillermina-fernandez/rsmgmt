@@ -77,7 +77,7 @@ function Taxes({rs_id}) {
             {showModal && <Modal rs_id={rs_id} />}
             <div className="hstack">
                 <h4>IMPUESTOS</h4>
-                <button type="button" className="btn btn-primary btn-sm ms-3" onClick={() => openModal('new')}>+</button>
+                <button type="button" className="btn btn-primary btn-sm mb-2 ms-3" onClick={() => openModal('new')}>+</button>
             </div>
             <table className="custom-table border">
                 <thead>
@@ -112,15 +112,23 @@ function Taxes({rs_id}) {
 
 function Rent({rs_id}) {
     const { modelData, openModal, showModal, handleDelete, setEditObj } = useDataContext();
-    const [lastRent, setLastRent] = useState({});
-    const [tenants, setTenants] = useState([]);
+    const [lastRent, setLastRent] = useState(null);
+    const [tenants, setTenants] = useState('');
 
     useEffect(() => {
-        console.log(modelData)
-        console.log(modelData[0])
-        
+        setLastRent(modelData[0])
+        let tenants = ''
+        if (lastRent) {
+            (lastRent.tenant).forEach(item => {
+                const last_name = item.last_name;
+                const first_name = item.first_name;
+                const cuit = item.cuit;
+                tenants += `${last_name} ${first_name} (${cuit}),\n`;
+            })
+        }
+        tenants = tenants.slice(0, -2);
+        setTenants(tenants);
     }, [modelData])
-
 
     const handleEdit = (editObj) => {
         openModal('edit');
@@ -132,28 +140,38 @@ function Rent({rs_id}) {
             {showModal && <Modal rs_id={rs_id} />}
             <div className="hstack">
                 <h4>ALQUILERES</h4>
-                <button type="button" className="btn btn-primary btn-sm ms-3" onClick={() => openModal('new')}>+</button>
+                <button type="button" className="btn btn-primary btn-sm mb-2 ms-3" onClick={() => openModal('new')}>+</button> {/* Agregar un select or something para que me lleve a los alqs anteriores*/}
             </div>
-            <table className="custom-table border">
-                {/*<tbody>
-                    <tr>
-                        <th>FECHA INICIO</th>
-                        <td>{spanishDate(lastRent.date_from)}</td>
-                    </tr>
-                    <tr>
-                        <th>FECHA FIN</th>
-                        <td>{spanishDate(lastRent.date_to)}</td>
-                    </tr>
-                    <tr>
-                        <th>ACTUALIZACION</th>
-                        <td>{lastRent.actualization}</td>
-                    </tr>
-                    <tr>
-                        <th>INQUILINO/S</th>
-                        <th></th>
-                    </tr>
-                </tbody>*/}
-            </table>
+            {lastRent &&
+                <table className="custom-table border">
+                    <tbody>
+                        <tr>
+                            <th>Fecha Inicio</th>
+                            <td>{spanishDate(lastRent.date_from)}</td>
+                        </tr>
+                        <tr>
+                            <th>Fecha Fin</th>
+                            <td>{spanishDate(lastRent.date_to)}</td>
+                        </tr>
+                        <tr>
+                            <th>Actualización</th>
+                            <td>{lastRent.actualization}</td>
+                        </tr>
+                        <tr>
+                            <th>Inquilino/s</th>
+                            <td>{tenants}</td>
+                        </tr>
+                        <tr>
+                            <th>Administra</th>
+                            <td>{lastRent.administrator}</td>
+                        </tr>
+                        <tr>
+                            <th>Observaciones</th>
+                            <td>{lastRent.observations}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            }
         </>
     )
 }
@@ -181,7 +199,7 @@ function RealState() {
                         </div>
                         <div className="hstack w-100 mt-3">
                             <div>
-                                <DataProvider modelName='alquiler' modelDepth='0' relatedModel='alquiler' relatedModelDepth='0' relatedFieldName='real_state' modelId={rsData.id}>
+                                <DataProvider modelName='alquiler' modelDepth='0' relatedModel='alquiler' relatedModelDepth='1' relatedFieldName='real_state' modelId={rsData.id}>
                                     <Rent rs_id={rsData.id} />
                                 </DataProvider>
                             </div>

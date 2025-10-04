@@ -33,7 +33,7 @@ def get_serializer_class(model_obj, field_names, depth_nbr):
         class Meta:
             model = model_obj
             fields = '__all__' if field_names == '__all__' else tuple(field_names)
-            depth = 0
+            depth = depth_nbr
             validators = meta_validators
 
         def to_representation(self, instance):
@@ -43,7 +43,7 @@ def get_serializer_class(model_obj, field_names, depth_nbr):
                     value = getattr(instance, field.name)
                     if value:
                         rep[field.name] = get_serializer_class(
-                            field.related_model, '__all__', 0
+                            field.related_model, '__all__', depth_nbr
                         )(value).data
             return rep
 
