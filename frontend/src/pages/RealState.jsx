@@ -3,6 +3,7 @@ import { spanishDate } from "../myScripts/myMainScript";
 import Modal from "../components/Modal";
 import { useDataContext } from "../context/DataContext";
 import { DataProvider } from "../context/DataContext";
+import { useEffect, useState } from "react";
 
 
 function get_persons(personsString) {
@@ -24,8 +25,8 @@ function RsTable({ rsData }) {
         buy_date = spanishDate(buy_date)
     }
 
-    const owners = get_persons(rsData.owners)
-    const usufructs = get_persons(rsData.usufructs)
+    const owners = rsData.owners ? get_persons(rsData.owners) : '';
+    const usufructs = rsData.usufructs ? get_persons(rsData.usufructs) : '';
 
     return (
         <table className="custom-fix-table border">
@@ -60,27 +61,23 @@ function RsTable({ rsData }) {
 }
 
 
-function Taxes() {
-    const { modelName, modelId, modelData, openModal, showModal, handleDelete, setEditObj, modelConfig } = useDataContext();
-    const obj_name_title = String(modelName[0]).toUpperCase() + String(modelName).slice(1);
-    const newModalTitle = `Agregar ${obj_name_title.replaceAll('_', ' ')}`
+function Taxes({rs_id}) {
+    const { modelName, modelData, openModal, showModal, handleDelete, setEditObj, modelConfig } = useDataContext();
 
     const cols = modelConfig[modelName]['columns'];
 
     const handleEdit = (editObj) => {
-        const objTitle = String(modelName[0]).toUpperCase() + String(modelName).slice(1)
-        const newModalTitle = `Editar ${objTitle.replaceAll('_', ' ')}`
-        openModal(newModalTitle);
+        openModal('edit');
         setEditObj(editObj)
     }
 
     // Cannot use the <Table /> component since real_state and tax_type return objects, not strings...
     return (
         <>
-            {showModal && <Modal rs_id={modelId} />}
+            {showModal && <Modal rs_id={rs_id} />}
             <div className="hstack">
                 <h4>IMPUESTOS</h4>
-                <button type="button" className="btn btn-primary btn-sm ms-3" onClick={() => openModal(newModalTitle)}>+</button>
+                <button type="button" className="btn btn-primary btn-sm ms-3" onClick={() => openModal('new')}>+</button>
             </div>
             <table className="custom-table border">
                 <thead>
@@ -113,36 +110,49 @@ function Taxes() {
 }
 
 
-function Rent() {
-    const { modelName, modelId, modelData, openModal, showModal, handleDelete, setEditObj, modelConfig } = useDataContext();
-    const obj_name_title = String(modelName[0]).toUpperCase() + String(modelName).slice(1);
-    const newModalTitle = `Agregar ${obj_name_title.replaceAll('_', ' ')}`
+function Rent({rs_id}) {
+    const { modelData, openModal, showModal, handleDelete, setEditObj } = useDataContext();
+    const [lastRent, setLastRent] = useState({});
+    const [tenants, setTenants] = useState([]);
+
+    useEffect(() => {
+        console.log(modelData)
+        console.log(modelData[0])
+        
+    }, [modelData])
+
 
     const handleEdit = (editObj) => {
-        const objTitle = String(modelName[0]).toUpperCase() + String(modelName).slice(1)
-        const newModalTitle = `Editar ${objTitle.replaceAll('_', ' ')}`
-        openModal(newModalTitle);
+        openModal('edit');
         setEditObj(editObj)
     }
 
-
-    // Cannot use the <Table /> component since real_state returns and object, not string...
     return (
         <>
-            {showModal && <Modal rs_id={modelId} />}
+            {showModal && <Modal rs_id={rs_id} />}
             <div className="hstack">
                 <h4>ALQUILERES</h4>
-                <button type="button" className="btn btn-primary btn-sm ms-3" onClick={() => openModal(newModalTitle)}>+</button>
+                <button type="button" className="btn btn-primary btn-sm ms-3" onClick={() => openModal('new')}>+</button>
             </div>
             <table className="custom-table border">
-                <thead>
+                {/*<tbody>
                     <tr>
-                        
+                        <th>FECHA INICIO</th>
+                        <td>{spanishDate(lastRent.date_from)}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    
-                </tbody>
+                    <tr>
+                        <th>FECHA FIN</th>
+                        <td>{spanishDate(lastRent.date_to)}</td>
+                    </tr>
+                    <tr>
+                        <th>ACTUALIZACION</th>
+                        <td>{lastRent.actualization}</td>
+                    </tr>
+                    <tr>
+                        <th>INQUILINO/S</th>
+                        <th></th>
+                    </tr>
+                </tbody>*/}
             </table>
         </>
     )
@@ -165,14 +175,14 @@ function RealState() {
                             </div>
                             <div className="ms-5" style={{ width: "60%", minHeight: "300px" }}>
                                 <DataProvider modelName='impuesto' modelDepth='0' relatedModel='impuesto' relatedModelDepth='1' relatedFieldName='real_state' modelId={rsData.id}>
-                                    <Taxes />
+                                    <Taxes rs_id={rsData.id} />
                                 </DataProvider>
                             </div>
                         </div>
                         <div className="hstack w-100 mt-3">
                             <div>
-                                <DataProvider modelName='alquiler' modelDepth='0' relatedModel='alquiler' relatedModelDepth='1' relatedFieldName='real_state' modelId={rsData.id}>
-                                    <Rent />
+                                <DataProvider modelName='alquiler' modelDepth='0' relatedModel='alquiler' relatedModelDepth='0' relatedFieldName='real_state' modelId={rsData.id}>
+                                    <Rent rs_id={rsData.id} />
                                 </DataProvider>
                             </div>
                         </div> 
