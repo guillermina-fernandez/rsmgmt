@@ -27,7 +27,7 @@ function Modal(props) {
                         {modelName === 'inquilino' && <FormOwner formRef={formRef} initialData={editObj}></FormOwner>}
                         {modelName === "tipo_de_propiedad" && <FormRsType formRef={formRef} initialData={editObj}></FormRsType>}
                         {modelName === 'tipo_de_impuesto' && <FormTaxType formRef={formRef} initialData={editObj}></FormTaxType>}
-                        {modelName === 'propiedad' && <FormRealState formRef={formRef}></FormRealState>}
+                        {modelName === 'propiedad' && <FormRealState formRef={formRef} initialData={editObj}></FormRealState>}
                         {modelName === "impuesto" && <FormTax formRef={formRef} initialData={editObj} rs_id={props.rs_id}></FormTax>}
                     </div>
                     <hr/>

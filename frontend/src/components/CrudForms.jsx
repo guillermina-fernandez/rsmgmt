@@ -44,14 +44,16 @@ function FormRsType({ formRef, initialData }) {
 }
 
 
-function FormRealState({ formRef }) {
-    const { register, onSubmit, setValue} = useFormHandler(null);
+function FormRealState({ formRef, initialData}) {
+    const { register, onSubmit, setValue } = useFormHandler(initialData);
     const { setError, setLoading } = useDataContext();
     
     const [rsTypes, setRsTypes] = useState(null);
     const [ownersData, setOwnersData] = useState(null);
     const [selectedOwners, setSelectedOwners] = useState([]);
     const [selectedUsufructs, setSelectedUsufructs] = useState([]);
+    const [initialOwners, setInitialOwners] = useState(null);
+    const [initialUsufructs, setInitialUsufructs] = useState(null);
 
     useEffect(() => {
         setValue('owner', selectedOwners);
@@ -92,6 +94,13 @@ function FormRealState({ formRef }) {
         
     }, []);
 
+    useEffect(() => {
+        if (initialData) {
+            setInitialOwners(initialData.owner);
+            setInitialUsufructs(initialData.usufruct);
+        }
+    }, [initialData])
+
     return (
         <form ref={formRef} onSubmit={onSubmit}>
             <div className='w-100'>
@@ -127,11 +136,11 @@ function FormRealState({ formRef }) {
             <hr></hr>
             <div className="w-100 mt-3">
                 <label className='mb-2'>PROPIETARIO/S</label>
-                <TableChecks objs={ownersData} onSelectionChange={setSelectedOwners}/>
+                <TableChecks objs={ownersData} onSelectionChange={setSelectedOwners} initialOwners={initialOwners}/>
             </div>
             <div className="w-100 mt-3">
                 <label className='mb-2'>USUFRUCTO</label>
-                <TableChecks objs={ownersData} onSelectionChange={setSelectedUsufructs}/>
+                <TableChecks objs={ownersData} onSelectionChange={setSelectedUsufructs} initialUsufructs={initialUsufructs} />
             </div>
             <hr></hr>
             <div className="hstack w-100 mt-3">

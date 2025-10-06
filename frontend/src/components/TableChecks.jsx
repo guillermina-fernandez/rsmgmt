@@ -1,8 +1,16 @@
 import { useState, useEffect } from "react";
 
-function TableChecks({ objs, onSelectionChange }) {
-    
+function TableChecks({ objs, onSelectionChange, initialOwners, initialUsufructs}) {
     const [itemsChecked, setItemsChecked] = useState([]);
+
+    useEffect(() => {
+        const owners = Array.isArray(initialOwners) ? initialOwners : [];
+        const usufructs = Array.isArray(initialUsufructs) ? initialUsufructs : [];
+        if (owners.length > 0 || usufructs.length > 0) {
+            const initialSelection = [...new Set([...owners, ...usufructs])];
+            setItemsChecked(initialSelection);
+        }
+    }, [initialOwners, initialUsufructs]);
 
     useEffect(() => {
         onSelectionChange(itemsChecked);

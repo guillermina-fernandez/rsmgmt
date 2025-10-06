@@ -14,12 +14,14 @@ function get_persons(personsString) {
 
 
 function RsTable({ rsData }) {
+    const { setEditObj, showModal, openModal } = useDataContext();
+    
     let rs_type = rsData.rs_type_name;
     const has_garage = rsData.has_garage;
     if (has_garage === 'SI') {
         rs_type += " CON COCHERA"
     }
-
+    
     let buy_date = rsData.buy_date || null
     if (buy_date) {
         buy_date = spanishDate(buy_date)
@@ -28,35 +30,44 @@ function RsTable({ rsData }) {
     const owners = rsData.owners ? get_persons(rsData.owners) : '';
     const usufructs = rsData.usufructs ? get_persons(rsData.usufructs) : '';
 
+    const handleEdit = (editObj) => {
+        openModal('edit');
+        setEditObj(editObj)
+    }
+
     return (
-        <table className="custom-fix-table border">
-            <tbody>
-                <tr>
-                    <th>Tipo:</th>
-                    <td>{rs_type}</td>
-                </tr>
-                <tr>
-                    <th>Dueños:</th>
-                    <td style={{ whiteSpace: 'pre-line' }}>{owners}</td>
-                </tr>
-                <tr>
-                    <th>Usufructo:</th>
-                    <td style={{ whiteSpace: 'pre-line' }}>{usufructs}</td>
-                </tr>
-                <tr>
-                    <th>Fecha Compra:</th>
-                    <td>{buy_date}</td>
-                </tr>
-                <tr>
-                    <th>Valor Compra:</th>
-                    <td>{rsData.buy_value}</td>
-                </tr>
-                <tr>
-                    <th>Observaciones</th>
-                    <td>{rsData.observations}</td>
-                </tr>
-            </tbody>
-        </table>
+        <>
+            {showModal && <Modal />}
+            <table className="custom-fix-table border">
+                <tbody>
+                    <tr>
+                        <th>Tipo:</th>
+                        <td>{rs_type}</td>
+                    </tr>
+                    <tr>
+                        <th>Dueños:</th>
+                        <td style={{ whiteSpace: 'pre-line' }}>{owners}</td>
+                    </tr>
+                    <tr>
+                        <th>Usufructo:</th>
+                        <td style={{ whiteSpace: 'pre-line' }}>{usufructs}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha Compra:</th>
+                        <td>{buy_date}</td>
+                    </tr>
+                    <tr>
+                        <th>Valor Compra:</th>
+                        <td>{rsData.buy_value}</td>
+                    </tr>
+                    <tr>
+                        <th>Observaciones</th>
+                        <td>{rsData.observations}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <button className="btn btn-secondary btn-sm w-100" type="button" onClick={() => handleEdit(rsData)}><i className="bi bi-pencil-square me-3"></i>Editar Propiedad</button>
+        </>
     )
 }
 
@@ -115,6 +126,8 @@ function Rent({rs_id}) {
     const [lastRent, setLastRent] = useState(null);
     const [tenants, setTenants] = useState('');
 
+    // FALTA: Nuevo alquiler, Editar alquiler actual, Redireccionar a todos los alquileres (o alq particular, ver...)
+
     useEffect(() => {
         setLastRent(modelData[0])
         let tenants = ''
@@ -139,38 +152,41 @@ function Rent({rs_id}) {
         <>
             {showModal && <Modal rs_id={rs_id} />}
             <div className="hstack">
-                <h4>ALQUILERES</h4>
+                <h4>ALQUILER</h4>
                 <button type="button" className="btn btn-primary btn-sm mb-2 ms-3" onClick={() => openModal('new')}>+</button> {/* Agregar un select or something para que me lleve a los alqs anteriores*/}
             </div>
             {lastRent &&
-                <table className="custom-table border">
-                    <tbody>
-                        <tr>
-                            <th>Fecha Inicio</th>
-                            <td>{spanishDate(lastRent.date_from)}</td>
-                        </tr>
-                        <tr>
-                            <th>Fecha Fin</th>
-                            <td>{spanishDate(lastRent.date_to)}</td>
-                        </tr>
-                        <tr>
-                            <th>Actualización</th>
-                            <td>{lastRent.actualization}</td>
-                        </tr>
-                        <tr>
-                            <th>Inquilino/s</th>
-                            <td>{tenants}</td>
-                        </tr>
-                        <tr>
-                            <th>Administra</th>
-                            <td>{lastRent.administrator}</td>
-                        </tr>
-                        <tr>
-                            <th>Observaciones</th>
-                            <td>{lastRent.observations}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div>
+                    <table className="custom-table border">
+                        <tbody>
+                            <tr>
+                                <th>Fecha Inicio</th>
+                                <td>{spanishDate(lastRent.date_from)}</td>
+                            </tr>
+                            <tr>
+                                <th>Fecha Fin</th>
+                                <td>{spanishDate(lastRent.date_to)}</td>
+                            </tr>
+                            <tr>
+                                <th>Actualización</th>
+                                <td>{lastRent.actualization}</td>
+                            </tr>
+                            <tr>
+                                <th>Inquilino/s</th>
+                                <td>{tenants}</td>
+                            </tr>
+                            <tr>
+                                <th>Administra</th>
+                                <td>{lastRent.administrator}</td>
+                            </tr>
+                            <tr>
+                                <th>Observaciones</th>
+                                <td>{lastRent.observations}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button className="btn btn-secondary btn-sm">Editar Alquiler</button>
+                </div>
             }
         </>
     )
@@ -189,7 +205,9 @@ function RealState() {
                         <div className="hstack w-100">
                             <div style={{ width: "40%", minHeight: "300px" }}>
                                 <h4 className="text-start">DATOS</h4>
-                                <RsTable rsData={rsData} />
+                                <DataProvider modelName='propiedad' modelDepth='1' relatedModel={null} relatedModelDepth={null} relatedFieldName={null} modelId={rsData.id}>
+                                    <RsTable rsData={rsData} />
+                                </DataProvider>
                             </div>
                             <div className="ms-5" style={{ width: "60%", minHeight: "300px" }}>
                                 <DataProvider modelName='impuesto' modelDepth='0' relatedModel='impuesto' relatedModelDepth='1' relatedFieldName='real_state' modelId={rsData.id}>

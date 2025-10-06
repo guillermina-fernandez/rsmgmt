@@ -234,7 +234,7 @@ export const DataProvider = ({ modelName, modelDepth, modelId, relatedModel, rel
         modelName,
         modelData,
         modelConfig,
-        updateObjData,
+        //updateObjData,
         setLoading,
         setError,
         showModal, 

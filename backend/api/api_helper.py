@@ -121,7 +121,7 @@ def update_object(request, model_name, obj_id, depth):
 
     form_data = normalize_form_data(models_dic[model_name], form_data)
 
-    serializer_class = get_serializer_class(models_dic[model_name], '__all__', depth)
+    serializer_class = get_serializer_class(models_dic[model_name], '__all__', int(depth))
 
     try:
         object_instance = models_dic[model_name].objects.get(id=int(obj_id))
@@ -135,8 +135,14 @@ def update_object(request, model_name, obj_id, depth):
 
     serializer = serializer_class(instance=object_instance, data=form_data)
     if serializer.is_valid():
+        print('is valid')
         try:
-            serializer.save()
+            instance = serializer.save()
+            if model_name == 'propiedad':
+                serializer = RealStateCustomSerializer(instance=instance)
+            else:
+                serializer_class = get_serializer_class(models_dic[model_name], '__all__', depth)
+                serializer = serializer_class(instance=instance)
             return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

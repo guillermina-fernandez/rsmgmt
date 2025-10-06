@@ -32,9 +32,27 @@ export const RsProvider = ({ children }) => {
         
     }, []);
 
+    // Alert error (if any)
+    useEffect(() => {
+        if (error) {
+            alert(error);
+        }
+    }, [error]);
+
+    // Render loading .gif or something
+    useEffect(() => {
+        if (loading) {
+            console.log('Show loading.gif');
+        } else {
+            console.log('Hide loading.gif');
+        }
+    }, [loading])
+
+
+
     const value = {
         rsData,
-        loading
+        loading,
     }
     
     return <DataContext.Provider value={value}>

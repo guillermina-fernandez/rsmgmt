@@ -60,15 +60,20 @@ class RealStateCustomSerializer(serializers.ModelSerializer):
         model = RealState
         fields = [
             "id",
-            "rs_name",
+            "address",
+            "floor",
+            "unit",
             "rs_type",
-            "rs_type_name",
             "has_garage",
-            "owners",
-            "usufructs",
+            "owner",
+            "usufruct",
             "buy_date",
             "buy_value",
             "observations",
+            "owners",
+            "usufructs",
+            "rs_name",
+            "rs_type_name",
         ]
 
         validators = []
