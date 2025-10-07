@@ -102,7 +102,7 @@ function FormRealState({ formRef, initialData}) {
     }, [initialData])
 
     return (
-        <form ref={formRef} onSubmit={onSubmit}>
+        <form ref={formRef} onSubmit={(onSubmit)}>
             <div className='w-100'>
                 <label htmlFor="rs_type">TIPO</label>
                 <select className="form-select form-select-sm" id="rs_type" name="rs_type" {...register('rs_type')} defaultValue="" required>

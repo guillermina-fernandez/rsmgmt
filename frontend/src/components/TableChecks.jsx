@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { useDataContext } from "../context/DataContext";
 
 function TableChecks({ objs, onSelectionChange, initialOwners, initialUsufructs}) {
+    const { modelData } = useDataContext;
     const [itemsChecked, setItemsChecked] = useState([]);
 
     useEffect(() => {

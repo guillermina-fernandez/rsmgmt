@@ -135,13 +135,12 @@ def update_object(request, model_name, obj_id, depth):
 
     serializer = serializer_class(instance=object_instance, data=form_data)
     if serializer.is_valid():
-        print('is valid')
         try:
             instance = serializer.save()
             if model_name == 'propiedad':
                 serializer = RealStateCustomSerializer(instance=instance)
             else:
-                serializer_class = get_serializer_class(models_dic[model_name], '__all__', depth)
+                serializer_class = get_serializer_class(models_dic[model_name], '__all__', int(depth))
                 serializer = serializer_class(instance=instance)
             return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
         except ValidationError as e:

@@ -13,23 +13,37 @@ function get_persons(personsString) {
 }
 
 
-function RsTable({ rsData }) {
-    const { setEditObj, showModal, openModal } = useDataContext();
+function RsTable() {
+    const { modelData, setEditObj, showModal, openModal } = useDataContext();
+    const [rsData, setRsData] = useState(null)
+    const [rsType, setRsType] = useState('')
+    const [buyDate, setBuyDate] = useState(null)
+    const [ownersStr, setOwnersStr] = useState('')
+    const [usufructStr, setUsufructStr] = useState('')
     
-    let rs_type = rsData.rs_type_name;
-    const has_garage = rsData.has_garage;
-    if (has_garage === 'SI') {
-        rs_type += " CON COCHERA"
-    }
+    useEffect(() => {
+        if (modelData && modelData.length > 0) {
+            setRsData(modelData[0])
+        }
+    }, [modelData])
+
+    useEffect(() => {
+        if (!rsData) return;
+        let rs_type = rsData.rs_type_name || '';
+        const has_garage = rsData.has_garage;
+        if (has_garage === 'SI') {
+            rs_type += " CON COCHERA"
+        }
+        setRsType(rs_type)
+        let buy_date = rsData.buy_date || null
+        buy_date = buy_date && spanishDate(buy_date)
+        setBuyDate(buy_date)
+        const owners = rsData.owners ? get_persons(rsData.owners) : '';
+        setOwnersStr(owners)
+        const usufructs = rsData.usufructs ? get_persons(rsData.usufructs) : '';
+        setUsufructStr(usufructs)
+    }, [rsData])
     
-    let buy_date = rsData.buy_date || null
-    if (buy_date) {
-        buy_date = spanishDate(buy_date)
-    }
-
-    const owners = rsData.owners ? get_persons(rsData.owners) : '';
-    const usufructs = rsData.usufructs ? get_persons(rsData.usufructs) : '';
-
     const handleEdit = (editObj) => {
         openModal('edit');
         setEditObj(editObj)
@@ -42,27 +56,27 @@ function RsTable({ rsData }) {
                 <tbody>
                     <tr>
                         <th>Tipo:</th>
-                        <td>{rs_type}</td>
+                        <td>{rsType}</td>
                     </tr>
                     <tr>
                         <th>Dueños:</th>
-                        <td style={{ whiteSpace: 'pre-line' }}>{owners}</td>
+                        <td style={{ whiteSpace: 'pre-line' }}>{ownersStr}</td>
                     </tr>
                     <tr>
                         <th>Usufructo:</th>
-                        <td style={{ whiteSpace: 'pre-line' }}>{usufructs}</td>
+                        <td style={{ whiteSpace: 'pre-line' }}>{usufructStr}</td>
                     </tr>
                     <tr>
                         <th>Fecha Compra:</th>
-                        <td>{buy_date}</td>
+                        <td>{buyDate}</td>
                     </tr>
                     <tr>
                         <th>Valor Compra:</th>
-                        <td>{rsData.buy_value}</td>
+                        <td>{rsData?.buy_value}</td>
                     </tr>
                     <tr>
                         <th>Observaciones</th>
-                        <td>{rsData.observations}</td>
+                        <td>{rsData?.observations}</td>
                     </tr>
                 </tbody>
             </table>
@@ -194,7 +208,12 @@ function Rent({rs_id}) {
 
 
 function RealState() {
-    const { rsData } = useRsContext();
+    const { modelData } = useDataContext();
+    const [rsData, setRsData] = useState(null)
+    
+    useEffect(() => {
+        modelData && setRsData(modelData[0])
+    }, [modelData])
 
     return (
         <>
@@ -205,13 +224,11 @@ function RealState() {
                         <div className="hstack w-100">
                             <div style={{ width: "40%", minHeight: "300px" }}>
                                 <h4 className="text-start">DATOS</h4>
-                                <DataProvider modelName='propiedad' modelDepth='1' relatedModel={null} relatedModelDepth={null} relatedFieldName={null} modelId={rsData.id}>
-                                    <RsTable rsData={rsData} />
-                                </DataProvider>
+                                <RsTable />
                             </div>
                             <div className="ms-5" style={{ width: "60%", minHeight: "300px" }}>
                                 <DataProvider modelName='impuesto' modelDepth='0' relatedModel='impuesto' relatedModelDepth='1' relatedFieldName='real_state' modelId={rsData.id}>
-                                    <Taxes rs_id={rsData.id} />
+                                    <Taxes rs_id={rsData?.id} />
                                 </DataProvider>
                             </div>
                         </div>
@@ -221,9 +238,10 @@ function RealState() {
                                     <Rent rs_id={rsData.id} />
                                 </DataProvider>
                             </div>
-                        </div> 
+                        </div>
                     </div>
-                </div>}
+                </div>
+            }
         </>
     )
 }

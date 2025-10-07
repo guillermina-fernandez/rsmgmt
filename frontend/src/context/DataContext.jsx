@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import { fetchModelObjectsAPI, fetchRelatedModelObjectsAPI, createObjDataAPI, updateObjDataAPI, deleteObjAPI } from "../services/api_crud";
+import { fetchModelObjectsAPI, fetchRelatedModelObjectsAPI, createObjDataAPI, updateObjDataAPI, deleteObjAPI, fetchObjDataAPI } from "../services/api_crud";
 
 const modelConfig = {
     propietario: {
@@ -43,9 +43,11 @@ const DataContext = createContext();
 
 export const useDataContext = () => useContext(DataContext);
 
-export const DataProvider = ({ modelName, modelDepth, modelId, relatedModel, relatedModelDepth, relatedFieldName, children }) => {
+export const DataProvider = ({ modelName, modelDepth, modelId: initialModelId, relatedModel, relatedModelDepth, relatedFieldName, children }) => {
     
     const [modelData, setModelData] = useState([])
+    const [modelId, setModelId] = useState(initialModelId)
+    const [fetchType, setFetchType] = useState('all')
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchObj, setSearchObj] = useState("");
@@ -57,16 +59,36 @@ export const DataProvider = ({ modelName, modelDepth, modelId, relatedModel, rel
 
     // Load initial data on page load
     useEffect(() => {
+        relatedModel && setFetchType('related')
+        !relatedModel && modelId && setFetchType('object')
+        !relatedModel && !modelId && setFetchType('all')
+        
         const loadData = async () => {
             try {
-                let fetchedData = [];
-                if (relatedModel) {
+                if (fetchType == 'object') {
+                    objId = String(useParams().obj_id);
+                    setModelId(objId)
+                    const fetchedData = await fetchObjDataAPI(modelName, modelId, modelDepth)
+                    setModelData(fetchedData)
+                } else {
+                    let fetchedData = null
+                    if (fetchType == 'all') {
+                        fetchedData = await fetchModelObjectsAPI(modelName, modelDepth)
+                    } else if (fetchType == 'related') {
+                        fetchedData = await fetchRelatedModelObjectsAPI(relatedModel, relatedModelDepth, relatedFieldName, modelId)
+                    }
+                    const flatData = Array.isArray(fetchedData) ? fetchedData.flat() : [];
+                    setModelData(flatData);
+                }
+                
+                
+                /*if (relatedModel) {
                     fetchedData = await fetchRelatedModelObjectsAPI(relatedModel, relatedModelDepth, relatedFieldName, modelId)
                 } else {
                     fetchedData = await fetchModelObjectsAPI(modelName, modelDepth)
                 }
                 const flatData = Array.isArray(fetchedData) ? fetchedData.flat() : [];
-                setModelData(flatData);
+                setModelData(flatData);*/
 
                 let obj_name = String(modelName[0]).toUpperCase() + String(modelName).slice(1);
                 obj_name = obj_name.replaceAll('_', ' ');
@@ -234,7 +256,7 @@ export const DataProvider = ({ modelName, modelDepth, modelId, relatedModel, rel
         modelName,
         modelData,
         modelConfig,
-        //updateObjData,
+        // updateObjData,
         setLoading,
         setError,
         showModal, 

@@ -30,9 +30,9 @@ function App() {
           />
         ))}
         <Route path="/propiedad/:rs_id" element={
-          <RsProvider >
+          <DataProvider modelName='propiedad' modelDepth='0' modelId={null} relatedModel={null} relatedModelDepth={null} relatedFieldName={null}>
               <RealState />
-          </RsProvider>
+          </DataProvider>
         } />
       </Routes>
     </main>
